@@ -21,7 +21,7 @@ public class Main
     public static string username = "";
     public static string usernametemp = "";
 
-    public static string level_auther = "";
+    public static string level_author = "";
     public static string level_song = "";
     public static string level_artist = "";
     public static string level_songtist = "";
@@ -109,7 +109,7 @@ public class Main
                 }
                 progressImage = mp.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
 
-                autherTxt.text = Main.level_auther;
+                autherTxt.text = Main.level_author;
                 songtistTxt.text = Main.level_songtist;
                 userNameTxt.text = username;
             }
@@ -227,12 +227,12 @@ public static class Levelload
 {
     public static void Postfix(LevelData __instance)
     {
-        Main.level_auther = DeleteRichTag(__instance.author);
+        Main.level_author = DeleteRichTag(__instance.author);
         Main.level_artist = DeleteRichTag(__instance.artist);
         Main.level_song = DeleteRichTag(__instance.song);
         Main.level_songtist = Main.level_artist + " - " + Main.level_song;
 
-        Main.autherTxt.text = Main.level_auther;
+        Main.autherTxt.text = Main.level_author;
         Main.songtistTxt.text = Main.level_songtist;
 
     }
@@ -374,7 +374,7 @@ public class Resets
         Main.level_song = "";
         Main.level_songtist = "";
 
-        Main.autherTxt.text = Main.level_auther;
+        Main.autherTxt.text = Main.level_author;
         Main.songtistTxt.text = Main.level_songtist;
     }
     public static void ResetJudgetxt()
