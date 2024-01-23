@@ -54,6 +54,10 @@ public class Main
     public static AssetBundleLoadResult result;
     public static AssetBundle asset;
 
+    public static float X = 0.16f;
+    public static float Y = 0.1f;
+    public static float S = 0.7f;
+
 
     public static bool Start(UnityModManager.ModEntry modEntry)
     {
@@ -127,6 +131,23 @@ public class Main
             }
 
             usernametemp = GUILayout.TextField(usernametemp);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Label("P1BoxSet");
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("X:", GUILayout.Width(20));
+            X = float.Parse(GUILayout.TextField(X.ToString(), 6, GUILayout.Width(80)));
+            X = GUILayout.HorizontalSlider(X, -0.4f, 1.4f);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Y:", GUILayout.Width(20));
+            Y = float.Parse(GUILayout.TextField(Y.ToString(), 6, GUILayout.Width(80)));
+            Y = GUILayout.HorizontalSlider(Y, -0.2f, 1.2f);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("S:", GUILayout.Width(20));
+            S = float.Parse(GUILayout.TextField(S.ToString(), 6, GUILayout.Width(80)));
+            S = GUILayout.HorizontalSlider(S, 0f, 2f);
             GUILayout.EndHorizontal();
         };
 
@@ -251,10 +272,12 @@ public class Hit
 
 public class MPSet : MonoBehaviour
 {
+    private float deltaTime = 0f;
     void Update()
     {
         try
         {
+            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
             if (scrConductor.instance == null || Main.mp == null)
             {
                 return;
@@ -267,6 +290,13 @@ public class MPSet : MonoBehaviour
                 {
                     checkPoint.floor.floorIcon = FloorIcon.None;
                 }
+                Main.mp.transform.GetChild(0).position = new Vector2(Main.X * Screen.width, Main.Y * Screen.height);
+                Main.mp.transform.GetChild(0).localScale = new Vector3(Main.S, Main.S, 1f);
+                //float ms = deltaTime * 1000f;
+                //float fps = 1.0f / deltaTime;
+                //string text = string.Format("{0:0.} FPS ({1:0.0} ms)", fps, ms);
+                //Main.mp.transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = text;
+
             }
             else
             {
@@ -279,7 +309,11 @@ public class MPSet : MonoBehaviour
             Debug.Log(e.Message);
             return;
         }
+
     }
+
+
+
 
 }
 
@@ -532,9 +566,7 @@ public class Patches
     {
         private static bool Prefix()
         {
-            if (Main.mp.gameObject.activeSelf)
-                return false;
-            else return true;
+            return false;
         }
     }
 }
