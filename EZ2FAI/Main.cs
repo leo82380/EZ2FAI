@@ -369,7 +369,7 @@ public class Resets
     }
     public static void ResetLvltxt()
     {
-        Main.level_auther = "";
+        Main.level_author = "";
         Main.level_artist = "";
         Main.level_song = "";
         Main.level_songtist = "";
