@@ -16,8 +16,8 @@ public class MPSet : MonoBehaviour
             {
                 Main.mp.SetActive(true);
                 
-                Main.mp.transform.GetChild(0).position = new Vector2(Main.X * Screen.width, Main.Y * Screen.height);
-                Main.mp.transform.GetChild(0).localScale = new Vector3(Main.S, Main.S, 1f);
+                Main.mp.transform.GetChild(0).position = new Vector2(Main.save.X * Screen.width, Main.save.Y * Screen.height);
+                Main.mp.transform.GetChild(0).localScale = new Vector3(Main.save.S, Main.save.S, 1f);
                 DeleteCheckPoint();
 
             }

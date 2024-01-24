@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Xml.Serialization;
 
 public class Main
 {
@@ -18,7 +19,7 @@ public class Main
     public static bool Modon = false;
     public static bool isRunning = false;
 
-    public static string username = "";
+    
     public static string usernametemp = "";
 
     public static string level_author = "";
@@ -53,22 +54,37 @@ public class Main
     public static Image progressImage;
     public static AssetBundleLoadResult result;
     public static AssetBundle asset;
-
-    public static float X = 0.16f;
-    public static float Y = 0.1f;
-    public static float S = 0.7f;
+    public static Setting setting;
+    public static Save save;
 
 
 
     public static bool Start(UnityModManager.ModEntry modEntry)
     {
         Logger = modEntry.Logger;
-        username = "Guest-" + RandomStringGenerator.GenerateRandomString(8);
-        usernametemp = username;
+        //xml 파일 불러오기
+        if (File.Exists(modEntry.Path + "/Settings.xml"))
+        {
+            save = UnityModManager.ModSettings.Load<Save>(modEntry);
+        }
+        else
+        {
+            save = new Save();
+            save.X = 0.16f;
+            save.Y = 0.1f;
+            save.S = 0.7f;
+            save.username = "Guest-" + RandomStringGenerator.GenerateRandomString(8);
+        }
+        usernametemp = save.username;
+        
+        setting = new Setting();
+        setting = UnityModManager.ModSettings.Load<Setting>(modEntry);
         
 
         modEntry.OnToggle = (entry,value) =>
         {
+            
+
             Modon = value;
             if(value)
             {
@@ -112,7 +128,7 @@ public class Main
 
                 autherTxt.text = Main.level_author;
                 songtistTxt.text = Main.level_songtist;
-                userNameTxt.text = username;
+                userNameTxt.text = save.username;
             }
             catch(Exception ex)
             {
@@ -127,29 +143,33 @@ public class Main
             GUILayout.Label("Name:",GUILayout.Width(0));
             if(GUILayout.Button("Apply",GUILayout.Width(120)))
             {
-                username = usernametemp;
-                userNameTxt.text = username; 
+                save.username = usernametemp;
+                userNameTxt.text = save.username; 
             }
 
             usernametemp = GUILayout.TextField(usernametemp);
             GUILayout.EndHorizontal();
 
-            GUILayout.Label("P1BoxSet");
             GUILayout.BeginHorizontal();
             GUILayout.Label("X:", GUILayout.Width(20));
-            X = float.Parse(GUILayout.TextField(X.ToString(), 6, GUILayout.Width(80)));
-            X = GUILayout.HorizontalSlider(X, -0.4f, 1.4f);
+            save.X = float.Parse(GUILayout.TextField(save.X.ToString(), 6, GUILayout.Width(80)));
+            save.X = GUILayout.HorizontalSlider(save.X, -0.4f, 1.4f);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.Label("Y:", GUILayout.Width(20));
-            Y = float.Parse(GUILayout.TextField(Y.ToString(), 6, GUILayout.Width(80)));
-            Y = GUILayout.HorizontalSlider(Y, -0.2f, 1.2f);
+            save.Y = float.Parse(GUILayout.TextField(save.Y.ToString(), 6, GUILayout.Width(80)));
+            save.Y = GUILayout.HorizontalSlider(save.Y, -0.2f, 1.2f);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.Label("S:", GUILayout.Width(20));
-            S = float.Parse(GUILayout.TextField(S.ToString(), 6, GUILayout.Width(80)));
-            S = GUILayout.HorizontalSlider(S, 0f, 2f);
+            save.S = float.Parse(GUILayout.TextField(save.S.ToString(), 6, GUILayout.Width(80)));
+            save.S = GUILayout.HorizontalSlider(save.S, 0f, 2f);
             GUILayout.EndHorizontal();
+        };
+        
+        modEntry.OnSaveGUI = (entry) =>
+        {
+            setting.Save(entry);
         };
 
 
@@ -189,4 +209,37 @@ public class Main
         }
     }
 
+}
+
+public class Setting : UnityModManager.ModSettings
+{
+    
+
+    public override void Save(UnityModManager.ModEntry modEntry)
+    {
+        try
+        {
+            UnityModManager.ModSettings.Save<Save>(Main.save, modEntry);
+        }
+        catch
+        {
+        }
+    }
+
+    public override string GetPath(UnityModManager.ModEntry modEntry)
+    {
+        return Path.Combine(modEntry.Path, GetType().Name + ".json");
+    }
+
+}
+
+public class Save : UnityModManager.ModSettings
+{
+    public string username;
+    public float X;
+    public float Y;
+    public float S;
+    //X = 0.16f;
+    //Y = 0.1f;
+    //S = 0.7f;
 }
