@@ -1,242 +1,162 @@
-﻿using UnityEngine;
-using UnityModManagerNet;
-using static UnityModManagerNet.UnityModManager.ModEntry;
-using HarmonyLib;
-using System.Reflection;
-using TMPro;
-using ADOFAI;
-using System.Text.RegularExpressions;
-using UnityEngine.UI;
-using System.Collections.Generic;
+﻿using HarmonyLib;
 using System;
 using System.IO;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
+using System.Reflection;
+using UnityEngine;
+using static UnityModManagerNet.UnityModManager;
+using static UnityModManagerNet.UnityModManager.ModEntry;
 
-public class Main
+namespace EZ2FAI
 {
-    public static Harmony harmony;
-    public static ModLogger Logger;
-    public static bool Modon = false;
-    public static bool isRunning = false;
-
-    
-    public static string usernametemp = "";
-
-    public static string level_author = "";
-    public static string level_song = "";
-    public static string level_artist = "";
-    public static string level_songtist = "";
-
-    public static float play_XA = 0;
-
-    public static int play_TE = 0;
-    public static int play_VE = 0;
-    public static int play_EP = 0;
-    public static int play_P = 0;
-    public static int play_LP = 0;
-    public static int play_VL = 0;
-    public static int play_TL = 0;
-
-    public static string nmargin;
-    public static string smargin;
-    public static string lmargin;
-    public static float angle;
-    public static HitMargin Lenient;
-    public static HitMargin Normal;
-    public static HitMargin Strict;
-
-    public static GameObject mp;
-    public static TextMeshProUGUI userNameTxt;
-    public static TextMeshProUGUI autherTxt;
-    public static TextMeshProUGUI songtistTxt;
-    public static TextMeshProUGUI judgeRateTxt;
-    public static TextMeshProUGUI[] judgeTexts = new TextMeshProUGUI[7];
-    public static Image progressImage;
-    public static AssetBundleLoadResult result;
-    public static AssetBundle asset;
-    public static Setting setting;
-    public static Save save;
-
-
-
-    public static bool Start(UnityModManager.ModEntry modEntry)
+    public static class Main
     {
-        Logger = modEntry.Logger;
-        if (File.Exists(modEntry.Path + "Settings.json"))
+        public static ModEntry Mod { get; private set; }
+        public static ModLogger Logger { get; private set; }
+        public static Harmony Harmony { get; private set; }
+        public static Settings Settings { get; private set; }
+        public static EZ2FAIPanel Panel { get; private set; }
+        public static Sprite Suckyoubus { get; private set; }
+        public static void Load(ModEntry modEntry)
         {
-            save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(modEntry.Path + "Settings.json"));
+            Mod = modEntry;
+            Logger = modEntry.Logger;
+            modEntry.OnToggle = OnToggle;
+            modEntry.OnGUI = OnGUI;
+            modEntry.OnSaveGUI = OnSaveGUI;
+            Texture2D texture = new Texture2D(1, 1);
+            texture.LoadImage(File.ReadAllBytes(Path.Combine(Mod.Path, "suckyoubus.png")));
+            Suckyoubus = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
         }
-        else
+        public static bool OnToggle(ModEntry modEntry, bool toggle)
         {
-            save = new Save();
-            save.X = 0.16f;
-            save.Y = 0.1f;
-            save.S = 0.7f;
-            save.username = "Guest-" + RandomStringGenerator.GenerateRandomString(8);
-        }
-        usernametemp = save.username;
-        
-        setting = new Setting();
-        setting = UnityModManager.ModSettings.Load<Setting>(modEntry);
-        
-
-        modEntry.OnToggle = (entry,value) =>
-        {
-            
-
-            Modon = value;
-            if(value)
+            if (toggle)
             {
-                harmony = new Harmony(modEntry.Info.Id);
-                harmony.PatchAll(Assembly.GetExecutingAssembly());
-                InitializeMP();
+                Settings = ModSettings.Load<Settings>(modEntry);
+                Panel = EZ2FAIPanel.CreatePanel();
+                Panel.Apply(Settings.Position, Settings.Scale);
+                Panel.SetNickname(Settings.Username);
+                SetProfileImage();
+                Harmony = new Harmony(modEntry.Info.Id);
+                Harmony.PatchAll(Assembly.GetExecutingAssembly());
             }
             else
             {
-                UnLoad(Path.GetDirectoryName(modEntry.Path));
-                if(isRunning)
-                {
-                    isRunning = false;
-                }
+                UnityEngine.Object.Destroy(Panel.gameObject);
+                Panel = null;
+                Harmony.UnpatchAll(Harmony.Id);
+                Harmony = null;
             }
-
             return true;
-        };
-
-        void InitializeMP()
+        }
+        public static void OnGUI(ModEntry modEntry)
         {
-            try
+            bool changed = false;
+            GUILayout.BeginHorizontal();
+            ButtonLabel("<b>Username</b>", OpenDiscordUrl);
+            string name = GUILayout.TextField(Settings.Username);
+            if (name != Settings.Username)
             {
-                asset = LoadAssetBundle(Path.GetDirectoryName(modEntry.Path));
-                mp = UnityEngine.Object.Instantiate(asset.LoadAsset<GameObject>("MPCanvas 12"));
-                UnityEngine.Object.DontDestroyOnLoad(mp);
-
-                MPSet mpSet = new GameObject().AddComponent<MPSet>();
-                UnityEngine.Object.DontDestroyOnLoad(mpSet);
-
-                userNameTxt = mp.transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>();
-                autherTxt = mp.transform.GetChild(0).GetChild(4).GetComponent<TextMeshProUGUI>();
-                songtistTxt = mp.transform.GetChild(0).GetChild(3).GetComponent<TextMeshProUGUI>();
-                judgeRateTxt = mp.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<TextMeshProUGUI>();
-
-                for(int i = 0;i <= 6;i++)
-                {
-                    judgeTexts[i] = mp.transform.GetChild(0).GetChild(6).GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>();
-                }
-                progressImage = mp.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
-
-                autherTxt.text = Main.level_author;
-                songtistTxt.text = Main.level_songtist;
-                userNameTxt.text = save.username;
+                Settings.Username = name;
+                Panel.SetNickname(name);
             }
-            catch(Exception ex)
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            ButtonLabel("<b>Profile Image</b>", OpenDiscordUrl);
+            string image = GUILayout.TextField(Settings.ProfileImage);
+            if (image != Settings.ProfileImage)
             {
-                Logger.Error($"Exception during InitializeMP: {ex}");
+                Settings.ProfileImage = name;
+                SetProfileImage();
             }
-        }
-
-        modEntry.OnGUI = (entry) =>
-        {
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            ButtonLabel("<b>Position</b>", OpenDiscordUrl);
+            changed |= DrawVector2(ref Settings.Position);
+            ButtonLabel("<b>Scale</b>", OpenDiscordUrl);
+            changed |= DrawVector2(ref Settings.Scale);
+            if (changed) Panel.Apply(Settings.Position, Settings.Scale);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Name:",GUILayout.Width(0));
-            if(GUILayout.Button("Apply",GUILayout.Width(120)))
+            ButtonLabel("<b>Song Progress</b>", OpenDiscordUrl);
+            Settings.SongProgress = GUILayout.Toggle(Settings.SongProgress, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+        public static void OnSaveGUI(ModEntry modEntry)
+        {
+            ModSettings.Save(Settings, modEntry);
+        }
+        public static void SetProfileImage()
+        {
+            if (string.IsNullOrEmpty(Settings.ProfileImage))
+                Panel.SetProfileImage(null);
+            else if (Settings.ProfileImage == "Suckyoubus")
+                Panel.SetProfileImage(Suckyoubus);
+            else if (File.Exists(Settings.ProfileImage))
             {
-                save.username = usernametemp;
-                userNameTxt.text = save.username; 
+                Texture2D texture = new Texture2D(1, 1);
+                texture.LoadImage(File.ReadAllBytes(Settings.ProfileImage));
+                var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
             }
-
-            usernametemp = GUILayout.TextField(usernametemp);
-            GUILayout.EndHorizontal();
-
+        }
+        public static bool DrawVector2(ref Vector2 vec2)
+        {
+            bool result = false;
+            result |= DrawFloat("X:", ref vec2.x);
+            result |= DrawFloat("Y:", ref vec2.y);
+            return result;
+        }
+        public static bool DrawFloat(string label, ref float f)
+        {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("X:", GUILayout.Width(20));
-            save.X = float.Parse(GUILayout.TextField(save.X.ToString(), 6, GUILayout.Width(80)));
-            save.X = GUILayout.HorizontalSlider(save.X, -0.4f, 1.4f);
+            float newValue = NamedSliderContent(label, f, 0, 1, 300);
             GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Y:", GUILayout.Width(20));
-            save.Y = float.Parse(GUILayout.TextField(save.Y.ToString(), 6, GUILayout.Width(80)));
-            save.Y = GUILayout.HorizontalSlider(save.Y, -0.2f, 1.2f);
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("S:", GUILayout.Width(20));
-            save.S = float.Parse(GUILayout.TextField(save.S.ToString(), 6, GUILayout.Width(80)));
-            save.S = GUILayout.HorizontalSlider(save.S, 0f, 2f);
-            GUILayout.EndHorizontal();
-        };
-        
-        modEntry.OnSaveGUI = (entry) =>
-        {
-            setting.Save(entry);
-        };
-
-
-        return true;
-    }
-
-
-    public static AssetBundle LoadAssetBundle(string modPath)
-    {
-        string path = Path.Combine(modPath, "mp");
-        try
-        {
-            AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
-            return assetBundle;
+            bool result = newValue != f;
+            f = newValue;
+            return result;
         }
-        catch (Exception e)
+        public static float NamedSliderContent(
+            string name,
+            float value,
+            float leftValue,
+            float rightValue,
+            float sliderWidth,
+            float roundNearest = 0,
+            float labelWidth = 0,
+            string valueFormat = "{0}")
         {
-            Logger.Error($"Error loading asset bundle {modPath}");
-            Logger.Error(e.Message);
-            AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
-            return assetBundle;
+            if (labelWidth == 0)
+            {
+                ButtonLabel(name, OpenDiscordUrl);
+                GUILayout.Space(4f);
+            }
+            else
+            {
+                ButtonLabel(name, OpenDiscordUrl, GUILayout.Width(labelWidth));
+            }
+            float newValue =
+                GUILayout.HorizontalSlider(
+                    value, leftValue, rightValue, GUILayout.Width(sliderWidth));
+            if (roundNearest != 0)
+            {
+                newValue = Mathf.Round(newValue / roundNearest) * roundNearest;
+            }
+            GUILayout.Space(8f);
+            if (valueFormat != "{0}")
+                ButtonLabel(string.Format(valueFormat, newValue), OpenDiscordUrl);
+            else float.TryParse(GUILayout.TextField(newValue.ToString("F4")), out newValue);
+            GUILayout.FlexibleSpace();
+            return newValue;
         }
-    }
-
-    public static void UnLoad(string modPath)
-    {
-        try
+        public static void ButtonLabel(string label, Action onPressed, params GUILayoutOption[] options)
         {
-            UnityEngine.Object.Destroy(mp);
-            asset.Unload(true);
+            if (GUILayout.Button(label, GUI.skin.label, options))
+                onPressed?.Invoke();
         }
-        catch (Exception e)
+        public static void OpenDiscordUrl()
         {
-            Logger.Log("=================");
-            Logger.Error(e.Message);
-            UnityEngine.Object.Destroy(mp); 
+            Application.OpenURL("https://discord.gg/tadjC4DyTn");
         }
     }
-
-}
-
-public class Setting : UnityModManager.ModSettings
-{
-    
-
-    public override void Save(UnityModManager.ModEntry modEntry)
-    {
-        try
-        {
-            // json 저장
-            string path = Path.Combine(modEntry.Path, "Settings.json");
-            File.WriteAllText(path, JsonConvert.SerializeObject(Main.save, Formatting.Indented));
-        }
-        catch
-        {
-        }
-    }
-
-}
-
-public class Save : UnityModManager.ModSettings
-{
-    public string username;
-    public float X;
-    public float Y;
-    public float S;
-    //X = 0.16f;
-    //Y = 0.1f;
-    //S = 0.7f;
 }
