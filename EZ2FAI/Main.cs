@@ -91,13 +91,14 @@ namespace EZ2FAI
         {
             if (string.IsNullOrEmpty(Settings.ProfileImage))
                 Panel.SetProfileImage(null);
-            else if (Settings.ProfileImage == "Suckyoubus")
+            else if (Settings.ProfileImage.Equals("Suckyoubus", StringComparison.OrdinalIgnoreCase))
                 Panel.SetProfileImage(Suckyoubus);
             else if (File.Exists(Settings.ProfileImage))
             {
                 Texture2D texture = new Texture2D(1, 1);
                 texture.LoadImage(File.ReadAllBytes(Settings.ProfileImage));
                 var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
+                Panel.SetProfileImage(result);
             }
         }
         public static bool DrawVector2(ref Vector2 vec2)
