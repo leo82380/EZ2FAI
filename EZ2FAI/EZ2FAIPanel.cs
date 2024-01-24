@@ -27,8 +27,8 @@ namespace EZ2FAI
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
-            if (nickName.Contains("섹") || nickName.Contains("Sex", StringComparison.OrdinalIgnoreCase) ||
-                nickName.Contains("Suck", StringComparison.OrdinalIgnoreCase))
+            if (nickName.Contains("섹") || nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 nickText.color = Color.white;
                 nickText.enableVertexGradient = true;
@@ -64,7 +64,6 @@ namespace EZ2FAI
             string song = RichTagBreaker.Replace(data.song, string.Empty);
             authorText.text = "BY " + author;
             mapNameText.text = artist + " - " + song;
-            Main.Logger.Log($"authorText:{authorText.text}, mapNameText{mapNameText.text}");
         }
         public void SetProfileImage(Sprite sprite)
         {

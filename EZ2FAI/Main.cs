@@ -66,7 +66,7 @@ namespace EZ2FAI
             string image = GUILayout.TextField(Settings.ProfileImage);
             if (image != Settings.ProfileImage)
             {
-                Settings.ProfileImage = name;
+                Settings.ProfileImage = image;
                 SetProfileImage();
             }
             GUILayout.FlexibleSpace();
