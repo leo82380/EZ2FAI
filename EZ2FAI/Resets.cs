@@ -66,7 +66,6 @@ public class Resets
 
     public static void ResetJudgetxt()
     {
-        JTM.ResetJTM();
         Main.play_XA = 0;
         Main.judgeRateTxt.text = "NaN%";
         Main.progressImage.fillAmount = 0f;

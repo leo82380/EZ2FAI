@@ -10,7 +10,7 @@ public class Hit
         if(scrController.instance.gameworld)
         {
             Main.play_XA = (float)Math.Round(scrController.instance.mistakesManager.percentXAcc * 100d,2);
-            Main.judgeRateTxt.text = Main.play_XA.ToString() + "%";
+            Main.judgeRateTxt.text = Main.play_XA + "%";
             if(play_XA_temp != Main.play_XA)
             {
                 play_XA_temp = Main.play_XA;
