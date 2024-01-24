@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 public class Main
 {
@@ -62,10 +63,9 @@ public class Main
     public static bool Start(UnityModManager.ModEntry modEntry)
     {
         Logger = modEntry.Logger;
-        //xml 파일 불러오기
-        if (File.Exists(modEntry.Path + "/Settings.xml"))
+        if (File.Exists(modEntry.Path + "Settings.json"))
         {
-            save = UnityModManager.ModSettings.Load<Save>(modEntry);
+            save = JsonConvert.DeserializeObject<Save>(File.ReadAllText(modEntry.Path + "Settings.json"));
         }
         else
         {
@@ -219,16 +219,13 @@ public class Setting : UnityModManager.ModSettings
     {
         try
         {
-            UnityModManager.ModSettings.Save<Save>(Main.save, modEntry);
+            // json 저장
+            string path = Path.Combine(modEntry.Path, "Settings.json");
+            File.WriteAllText(path, JsonConvert.SerializeObject(Main.save, Formatting.Indented));
         }
         catch
         {
         }
-    }
-
-    public override string GetPath(UnityModManager.ModEntry modEntry)
-    {
-        return Path.Combine(modEntry.Path, GetType().Name + ".json");
     }
 
 }
