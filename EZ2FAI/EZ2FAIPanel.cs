@@ -27,8 +27,13 @@ namespace EZ2FAI
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
-            if (nickName.Contains("섹") || nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (nickName.Contains("섹") || 
+                nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("Nera", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("새제비", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("Leo", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("Shin", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 nickText.color = Color.white;
                 nickText.enableVertexGradient = true;
