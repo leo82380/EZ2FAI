@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
@@ -91,13 +92,14 @@ namespace EZ2FAI
         {
             if (string.IsNullOrEmpty(Settings.ProfileImage))
                 Panel.SetProfileImage(null);
-            else if (Settings.ProfileImage == "Suckyoubus")
+            else if (Settings.ProfileImage.Equals("Suckyoubus", StringComparison.OrdinalIgnoreCase))
                 Panel.SetProfileImage(Suckyoubus);
             else if (File.Exists(Settings.ProfileImage))
             {
                 Texture2D texture = new Texture2D(1, 1);
                 texture.LoadImage(File.ReadAllBytes(Settings.ProfileImage));
                 var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
+                Panel.SetProfileImage(result);
             }
         }
         public static bool DrawVector2(ref Vector2 vec2)
@@ -157,6 +159,48 @@ namespace EZ2FAI
         public static void OpenDiscordUrl()
         {
             Application.OpenURL("https://discord.gg/tadjC4DyTn");
+        }
+        static string[] verbs = new string[]
+        {
+            "좋아해요",
+            "사랑해요",
+            "연모해요",
+            "흠모해요",
+            "사모해요",
+            "귀여워해요",
+            "존경해요",
+            "이뻐해요"
+        };
+        static string[] verbs2 = new string[]
+        {
+            "다이스키~♥",
+            "아이시떼루~♥",
+        };
+        public static string GetRandomVerb()
+        {
+            return verbs[(int)Math.Round(UnityEngine.Random.value * (verbs.Length - 1))];
+        }
+        public static string GetRandomVerb2()
+        {
+            return verbs2[(int)Math.Round(UnityEngine.Random.value * (verbs2.Length - 1))];
+        }
+        public static void EnableRainbow(TextMeshProUGUI text, VertexGradient? grad = null)
+        {
+            text.color = Color.white;
+            text.enableVertexGradient = true;
+            text.colorGradient = grad ??
+                new VertexGradient(
+                    new Color(1, 1, 0),
+                    new Color(0, 1, 1),
+                    new Color(1, 0, 1),
+                    new Color(0.5f, 1, 0.5f)
+                    );
+        }
+        public static void DisableRainbow(TextMeshProUGUI text)
+        {
+            text.color = Color.white;
+            text.colorGradient = new VertexGradient(Color.white);
+            text.enableVertexGradient = false;
         }
     }
 }
