@@ -76,25 +76,33 @@ namespace EZ2FAI
         }
         public void ResetMapName()
         {
-            mapNameText.text = "나는 석큐버스를";
-            authorText.text = Main.GetRandomVerb();
-
-            if (authorText.text == "사랑해요")
+            Main.DisableRainbow(mapNameText);
+            Main.DisableRainbow(authorText);
+            if (UnityEngine.Random.value < 0.5f)
             {
-                VertexGradient grad = new VertexGradient(
-                    new Color(0.5f, 1, 0),
-                    new Color(0.5f, 0.5f, 1),
-                    new Color(1, 0.5f, 1),
-                    new Color(0.5f, 1, 1)
-                    );
-                Main.EnableRainbow(mapNameText, grad);
-                Main.EnableRainbow(authorText, grad);
+                Main.EnableRainbow(mapNameText);
+                Main.EnableRainbow(authorText);
+                mapNameText.text = "석큐버스짱~!";
+                authorText.text = Main.GetRandomVerb2();
             }
             else
             {
-                Main.DisableRainbow(mapNameText);
-                Main.DisableRainbow(authorText);
+                mapNameText.text = "나는 석큐버스를";
+                authorText.text = Main.GetRandomVerb();
+
+                if (authorText.text == "사랑해요")
+                {
+                    VertexGradient grad = new VertexGradient(
+                        new Color(0.5f, 1, 0),
+                        new Color(0.5f, 0.5f, 1),
+                        new Color(1, 0.5f, 1),
+                        new Color(0.5f, 1, 1)
+                        );
+                    Main.EnableRainbow(mapNameText, grad);
+                    Main.EnableRainbow(authorText, grad);
+                }
             }
+            
         }
         public void Apply(Vector2 position, Vector2 scale)
         {

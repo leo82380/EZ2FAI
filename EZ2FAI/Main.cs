@@ -171,9 +171,18 @@ namespace EZ2FAI
             "존경해요",
             "이뻐해요"
         };
+        static string[] verbs2 = new string[]
+        {
+            "다이스키~♥",
+            "아이시떼루~♥",
+        };
         public static string GetRandomVerb()
         {
             return verbs[(int)Math.Round(UnityEngine.Random.value * (verbs.Length - 1))];
+        }
+        public static string GetRandomVerb2()
+        {
+            return verbs2[(int)Math.Round(UnityEngine.Random.value * (verbs2.Length - 1))];
         }
         public static void EnableRainbow(TextMeshProUGUI text, VertexGradient? grad = null)
         {
