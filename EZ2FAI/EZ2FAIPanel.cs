@@ -24,33 +24,23 @@ namespace EZ2FAI
         public TextMeshProUGUI judgePercentText;
         public TextMeshProUGUI[] judgeTitleTexts;
         public TextMeshProUGUI[] judgeCountTexts;
+        public TextMeshProUGUI curBPMTitleText;
+        public TextMeshProUGUI curBPMText;
+        public TextMeshProUGUI realBPMTitleText;
+        public TextMeshProUGUI realBPMText;
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
-            if (nickName.Contains("섹") || 
+            if (nickName.Contains("섹") ||
                 nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 nickName.IndexOf("Nera", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 nickName.IndexOf("새제비", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 nickName.IndexOf("Leo", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Shin", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                nickText.color = Color.white;
-                nickText.enableVertexGradient = true;
-                nickText.colorGradient =
-                    new VertexGradient(
-                        new Color(1, 1, 0),
-                        new Color(0, 1, 1),
-                        new Color(1, 0, 1),
-                        new Color(0.5f, 1, 0.5f)
-                        );
-            }
-            else
-            {
-                nickText.color = Color.white;
-                nickText.colorGradient = new VertexGradient(Color.white);
-                nickText.enableVertexGradient = false;
-            }
+                nickName.IndexOf("Shin", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                nickName.IndexOf("Hyuk", StringComparison.OrdinalIgnoreCase) >= 0)
+                Main.EnableRainbow(nickText);
+            else Main.DisableRainbow(nickText);
         }
         public void SetJudgeAccuracy(scrController ctrl)
         {
@@ -87,13 +77,31 @@ namespace EZ2FAI
         public void ResetMapName()
         {
             mapNameText.text = "나는 석큐버스를";
-            authorText.text = "사랑해요";
+            authorText.text = Main.GetRandomVerb();
+
+            if (authorText.text == "사랑해요")
+            {
+                VertexGradient grad = new VertexGradient(
+                    new Color(0.5f, 1, 0),
+                    new Color(0.5f, 0.5f, 1),
+                    new Color(1, 0.5f, 1),
+                    new Color(0.5f, 1, 1)
+                    );
+                Main.EnableRainbow(mapNameText, grad);
+                Main.EnableRainbow(authorText, grad);
+            }
+            else
+            {
+                Main.DisableRainbow(mapNameText);
+                Main.DisableRainbow(authorText);
+            }
         }
         public void Apply(Vector2 position, Vector2 scale)
         {
             var t = background.transform;
             t.localPosition = new Vector2(position.x * Screen.width - Screen.width / 2, position.y * Screen.height - Screen.height / 2);
             t.localScale = scale;
+            ResetMapName();
         }
         public static EZ2FAIPanel CreatePanel()
         {
@@ -132,6 +140,13 @@ namespace EZ2FAI
                 judgeCountTexts[count] = child.Find("Count").GetComponent<TextMeshProUGUI>();
                 count++;
             }
+            var cbpm = bg.Find("CurBPM");
+            curBPMTitleText = cbpm.GetComponent<TextMeshProUGUI>();
+            curBPMText = cbpm.Find("CurBPMText").GetComponent<TextMeshProUGUI>();
+            var rbpm = bg.Find("RealBPM");
+            realBPMTitleText = rbpm.GetComponent<TextMeshProUGUI>();
+            realBPMText = rbpm.Find("RealBPMText").GetComponent<TextMeshProUGUI>();
+            judgeTitleText.text = "Accuracy";
             ResetMapName();
             ResetJudgeAccuracy();
         }

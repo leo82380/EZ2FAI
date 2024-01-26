@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
@@ -158,6 +159,39 @@ namespace EZ2FAI
         public static void OpenDiscordUrl()
         {
             Application.OpenURL("https://discord.gg/tadjC4DyTn");
+        }
+        static string[] verbs = new string[]
+        {
+            "좋아해요",
+            "사랑해요",
+            "연모해요",
+            "흠모해요",
+            "사모해요",
+            "귀여워해요",
+            "존경해요",
+            "이뻐해요"
+        };
+        public static string GetRandomVerb()
+        {
+            return verbs[(int)Math.Round(UnityEngine.Random.value * (verbs.Length - 1))];
+        }
+        public static void EnableRainbow(TextMeshProUGUI text, VertexGradient? grad = null)
+        {
+            text.color = Color.white;
+            text.enableVertexGradient = true;
+            text.colorGradient = grad ??
+                new VertexGradient(
+                    new Color(1, 1, 0),
+                    new Color(0, 1, 1),
+                    new Color(1, 0, 1),
+                    new Color(0.5f, 1, 0.5f)
+                    );
+        }
+        public static void DisableRainbow(TextMeshProUGUI text)
+        {
+            text.color = Color.white;
+            text.colorGradient = new VertexGradient(Color.white);
+            text.enableVertexGradient = false;
         }
     }
 }

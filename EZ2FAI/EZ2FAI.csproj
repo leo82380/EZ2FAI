@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="EZ2FAIPanel.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="Patches\BpmUpdater.cs" />
     <Compile Include="Patches\HitPatch.cs" />
     <Compile Include="Patches\KillCheckPointsPatch.cs" />
     <Compile Include="Patches\LevelLoadPatch.cs" />
@@ -42,6 +43,7 @@
     <Compile Include="Patches\SongProgressPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Variables.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
