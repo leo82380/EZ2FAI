@@ -83,6 +83,12 @@ namespace EZ2FAI
             Settings.SongProgress = GUILayout.Toggle(Settings.SongProgress, "");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            ButtonLabel("<b>Drag Enabled</b>", OpenDiscordUrl);
+            Settings.DragEnabled = GUILayout.Toggle(Settings.DragEnabled, "");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
@@ -158,7 +164,7 @@ namespace EZ2FAI
         }
         public static void OpenDiscordUrl()
         {
-            Application.OpenURL("https://discord.gg/tadjC4DyTn");
+            //Application.OpenURL("https://discord.gg/tadjC4DyTn");
         }
         static string[] verbs = new string[]
         {

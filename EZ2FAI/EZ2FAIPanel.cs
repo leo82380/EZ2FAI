@@ -31,16 +31,16 @@ namespace EZ2FAI
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
-            if (nickName.Contains("섹") ||
-                nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Nera", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("새제비", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Leo", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Shin", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                nickName.IndexOf("Hyuk", StringComparison.OrdinalIgnoreCase) >= 0)
-                Main.EnableRainbow(nickText);
-            else Main.DisableRainbow(nickText);
+            //if (nickName.Contains("섹") ||
+            //    nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            //    nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            //    nickName.IndexOf("Nera", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            //    nickName.IndexOf("새제비", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            //    nickName.IndexOf("Leo", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            //    nickName.IndexOf("Shin", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            //    nickName.IndexOf("Hyuk", StringComparison.OrdinalIgnoreCase) >= 0)
+            //    Main.EnableRainbow(nickText);
+            //else Main.DisableRainbow(nickText);
         }
         public void SetJudgeAccuracy(scrController ctrl)
         {
@@ -76,33 +76,34 @@ namespace EZ2FAI
         }
         public void ResetMapName()
         {
-            Main.DisableRainbow(mapNameText);
-            Main.DisableRainbow(authorText);
-            if (UnityEngine.Random.value < 0.5f)
-            {
-                Main.EnableRainbow(mapNameText);
-                Main.EnableRainbow(authorText);
-                mapNameText.text = "석큐버스짱~!";
-                authorText.text = Main.GetRandomVerb2();
-            }
-            else
-            {
-                mapNameText.text = "나는 석큐버스를";
-                authorText.text = Main.GetRandomVerb();
+            //Main.DisableRainbow(mapNameText);
+            //Main.DisableRainbow(authorText);
+            //if (UnityEngine.Random.value < 0.5f)
+            //{
+            //    Main.EnableRainbow(mapNameText);
+            //    Main.EnableRainbow(authorText);
+            //    mapNameText.text = "석큐버스짱~!";
+            //    authorText.text = Main.GetRandomVerb2();
+            //}
+            //else
+            //{
+            //    mapNameText.text = "나는 석큐버스를";
+            //    authorText.text = Main.GetRandomVerb();
 
-                if (authorText.text == "사랑해요")
-                {
-                    VertexGradient grad = new VertexGradient(
-                        new Color(0.5f, 1, 0),
-                        new Color(0.5f, 0.5f, 1),
-                        new Color(1, 0.5f, 1),
-                        new Color(0.5f, 1, 1)
-                        );
-                    Main.EnableRainbow(mapNameText, grad);
-                    Main.EnableRainbow(authorText, grad);
-                }
-            }
-            
+            //    if (authorText.text == "사랑해요")
+            //    {
+            //        VertexGradient grad = new VertexGradient(
+            //            new Color(0.5f, 1, 0),
+            //            new Color(0.5f, 0.5f, 1),
+            //            new Color(1, 0.5f, 1),
+            //            new Color(0.5f, 1, 1)
+            //            );
+            //        Main.EnableRainbow(mapNameText, grad);
+            //        Main.EnableRainbow(authorText, grad);
+            //    }
+            //}
+            mapNameText.text = "...";
+            authorText.text = "...";
         }
         public void Apply(Vector2 position, Vector2 scale)
         {
@@ -160,6 +161,7 @@ namespace EZ2FAI
         }
         void IDragHandler.OnDrag(PointerEventData eventData)
         {
+            if (!Main.Settings.DragEnabled) return;
             Vector2 ePos = eventData.position;
             var x = ePos.x / Screen.width;
             var y = ePos.y / Screen.height;
