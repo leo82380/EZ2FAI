@@ -5,6 +5,7 @@ namespace EZ2FAI
 {
     public class Settings : ModSettings
     {
+        public bool DragEnabled = false;
         public string Username = "Suckyoubus";
         public string ProfileImage = "Suckyoubus";
         public Vector2 Position = new Vector2(0.16f, 0.1f);
