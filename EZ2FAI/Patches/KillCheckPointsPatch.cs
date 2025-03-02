@@ -7,15 +7,26 @@ namespace EZ2FAI.Patches
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ffxCheckpoint), "doEffect")]
-        public static bool doEffect() => false;
+        public static bool doEffect()
+        {
+            return Main.Settings.IsCheckPoint;
+        }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(scrController), "Awake_Rewind")]
         public static void Awake_Rewind()
         {
             var checkPoints = UnityEngine.Object.FindObjectsOfType<ffxCheckpoint>();
             if (checkPoints == null) return;
-            foreach (var checkPoint in checkPoints)
-                checkPoint.floor.floorIcon = FloorIcon.None;
+            if (!Main.Settings.IsCheckPoint)
+            {
+                foreach (var checkPoint in checkPoints)
+                    checkPoint.floor.floorIcon = FloorIcon.None;
+            }
+            else
+            {
+                foreach (var checkPoint in checkPoints)
+                    checkPoint.floor.floorIcon = FloorIcon.Checkpoint;
+            }
         }
     }
 }

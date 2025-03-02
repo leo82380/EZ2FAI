@@ -31,16 +31,6 @@ namespace EZ2FAI
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
-            //if (nickName.Contains("섹") ||
-            //    nickName.IndexOf("Sex", StringComparison.OrdinalIgnoreCase) >= 0 ||
-            //    nickName.IndexOf("Suck", StringComparison.OrdinalIgnoreCase) >= 0 ||
-            //    nickName.IndexOf("Nera", StringComparison.OrdinalIgnoreCase) >= 0 ||
-            //    nickName.IndexOf("새제비", StringComparison.OrdinalIgnoreCase) >= 0 ||
-            //    nickName.IndexOf("Leo", StringComparison.OrdinalIgnoreCase) >= 0 ||
-            //    nickName.IndexOf("Shin", StringComparison.OrdinalIgnoreCase) >= 0 ||
-            //    nickName.IndexOf("Hyuk", StringComparison.OrdinalIgnoreCase) >= 0)
-            //    Main.EnableRainbow(nickText);
-            //else Main.DisableRainbow(nickText);
         }
         public void SetJudgeAccuracy(scrController ctrl)
         {
@@ -57,8 +47,20 @@ namespace EZ2FAI
             string author = RichTagBreaker.Replace(data.author, string.Empty);
             string artist = RichTagBreaker.Replace(data.artist, string.Empty);
             string song = RichTagBreaker.Replace(data.song, string.Empty);
+            if (author == string.Empty)
+                author = "...";
+            if (artist == string.Empty)
+                artist = "...";
+            if (song == string.Empty)
+                song = "...";
             authorText.text = "BY " + author;
-            mapNameText.text = artist + " - " + song;
+            if (song.Length > 7 || artist.Length > 5)
+                mapNameText.text = 
+                    (artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist) + 
+                    " - " + 
+                    (song.Length > 7 ? song.Substring(0, 7) + "..." : song);
+            else
+                mapNameText.text = artist + " - " + song;
         }
         public void SetProfileImage(Sprite sprite)
         {
@@ -76,32 +78,6 @@ namespace EZ2FAI
         }
         public void ResetMapName()
         {
-            //Main.DisableRainbow(mapNameText);
-            //Main.DisableRainbow(authorText);
-            //if (UnityEngine.Random.value < 0.5f)
-            //{
-            //    Main.EnableRainbow(mapNameText);
-            //    Main.EnableRainbow(authorText);
-            //    mapNameText.text = "석큐버스짱~!";
-            //    authorText.text = Main.GetRandomVerb2();
-            //}
-            //else
-            //{
-            //    mapNameText.text = "나는 석큐버스를";
-            //    authorText.text = Main.GetRandomVerb();
-
-            //    if (authorText.text == "사랑해요")
-            //    {
-            //        VertexGradient grad = new VertexGradient(
-            //            new Color(0.5f, 1, 0),
-            //            new Color(0.5f, 0.5f, 1),
-            //            new Color(1, 0.5f, 1),
-            //            new Color(0.5f, 1, 1)
-            //            );
-            //        Main.EnableRainbow(mapNameText, grad);
-            //        Main.EnableRainbow(authorText, grad);
-            //    }
-            //}
             mapNameText.text = "...";
             authorText.text = "...";
         }
@@ -110,6 +86,7 @@ namespace EZ2FAI
             var t = background.transform;
             t.localPosition = new Vector2(position.x * Screen.width - Screen.width / 2, position.y * Screen.height - Screen.height / 2);
             t.localScale = scale;
+            background.pixelsPerUnitMultiplier = Main.Settings.pixelsPerUnitMultiplier;
             ResetMapName();
         }
         public static EZ2FAIPanel CreatePanel()
@@ -120,6 +97,7 @@ namespace EZ2FAI
             MPCanvasPrefab = assets.LoadAsset<GameObject>("MPCanvas 12");
             return Instantiate(MPCanvasPrefab).AddComponent<EZ2FAIPanel>();
         }
+        
 #pragma warning disable IDE0051
         private void Awake()
         {

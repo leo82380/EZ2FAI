@@ -17,11 +17,8 @@ namespace EZ2FAI.Patches
         [HarmonyPatch(typeof(scrUIController), "WipeFromBlack")]
         public static void WipeFromBlack()
         {
-            if (scnGame.instance.checkpointsUsed == 0)
-            {
-                Main.Panel.ResetJudgeAccuracy();
-                Main.Panel.ResetProgress();
-            }
+            Main.Panel.ResetJudgeAccuracy();
+            Main.Panel.ResetProgress();
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(scrController), "ResetCustomLevel")]

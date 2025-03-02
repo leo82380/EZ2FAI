@@ -16,7 +16,6 @@ namespace EZ2FAI
         public static Harmony Harmony { get; private set; }
         public static Settings Settings { get; private set; }
         public static EZ2FAIPanel Panel { get; private set; }
-        public static Sprite Suckyoubus { get; private set; }
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -24,9 +23,6 @@ namespace EZ2FAI
             modEntry.OnToggle = OnToggle;
             modEntry.OnGUI = OnGUI;
             modEntry.OnSaveGUI = OnSaveGUI;
-            Texture2D texture = new Texture2D(1, 1);
-            texture.LoadImage(File.ReadAllBytes(Path.Combine(Mod.Path, "suckyoubus.png")));
-            Suckyoubus = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
         }
         public static bool OnToggle(ModEntry modEntry, bool toggle)
         {
@@ -53,41 +49,63 @@ namespace EZ2FAI
         {
             bool changed = false;
             GUILayout.BeginHorizontal();
-            ButtonLabel("<b>Username</b>", OpenDiscordUrl);
-            string name = GUILayout.TextField(Settings.Username);
-            if (name != Settings.Username)
             {
-                Settings.Username = name;
-                Panel.SetNickname(name);
+                GUILayout.Label("<b>Username</b>");
+                string name = GUILayout.TextField(Settings.Username);
+                if (name != Settings.Username)
+                {
+                    Settings.Username = name;
+                    Panel.SetNickname(name);
+                }
+
+                GUILayout.FlexibleSpace();
             }
-            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+            
             GUILayout.BeginHorizontal();
-            ButtonLabel("<b>Profile Image</b>", OpenDiscordUrl);
-            string image = GUILayout.TextField(Settings.ProfileImage);
-            if (image != Settings.ProfileImage)
             {
-                Settings.ProfileImage = image;
-                SetProfileImage();
+                GUILayout.Label("<b>Profile Image</b>");
+                string image = GUILayout.TextField(Settings.ProfileImage);
+                if (image != Settings.ProfileImage)
+                {
+                    Settings.ProfileImage = image;
+                    SetProfileImage();
+                }
+
+                GUILayout.FlexibleSpace();
             }
-            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            ButtonLabel("<b>Position</b>", OpenDiscordUrl);
+            
+            GUILayout.Label("<b>Position</b>");
             changed |= DrawVector2(ref Settings.Position);
-            ButtonLabel("<b>Scale</b>", OpenDiscordUrl);
+            GUILayout.Label("<b>Scale</b>");
             changed |= DrawVector2(ref Settings.Scale);
+            GUILayout.Label("<b>Pixel Per Unit</b>");
+            changed |= DrawFloat("", ref Settings.pixelsPerUnitMultiplier, 1f, 4f);
             if (changed) Panel.Apply(Settings.Position, Settings.Scale);
 
             GUILayout.BeginHorizontal();
-            ButtonLabel("<b>Song Progress</b>", OpenDiscordUrl);
-            Settings.SongProgress = GUILayout.Toggle(Settings.SongProgress, "");
-            GUILayout.FlexibleSpace();
+            {
+                GUILayout.Label("<b>Song Progress</b>");
+                Settings.SongProgress = GUILayout.Toggle(Settings.SongProgress, "");
+                GUILayout.FlexibleSpace();
+            }
             GUILayout.EndHorizontal();
-
+            
             GUILayout.BeginHorizontal();
-            ButtonLabel("<b>Drag Enabled</b>", OpenDiscordUrl);
-            Settings.DragEnabled = GUILayout.Toggle(Settings.DragEnabled, "");
-            GUILayout.FlexibleSpace();
+            {
+                GUILayout.Label("<b>Drag Enabled</b>");
+                Settings.DragEnabled = GUILayout.Toggle(Settings.DragEnabled, "");
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("<b>Check Point</b>");
+                Settings.IsCheckPoint = GUILayout.Toggle(Settings.IsCheckPoint, "");
+                GUILayout.FlexibleSpace();
+            }
             GUILayout.EndHorizontal();
         }
         public static void OnSaveGUI(ModEntry modEntry)
@@ -98,8 +116,6 @@ namespace EZ2FAI
         {
             if (string.IsNullOrEmpty(Settings.ProfileImage))
                 Panel.SetProfileImage(null);
-            else if (Settings.ProfileImage.Equals("Suckyoubus", StringComparison.OrdinalIgnoreCase))
-                Panel.SetProfileImage(Suckyoubus);
             else if (File.Exists(Settings.ProfileImage))
             {
                 Texture2D texture = new Texture2D(1, 1);
@@ -115,10 +131,10 @@ namespace EZ2FAI
             result |= DrawFloat("Y:", ref vec2.y);
             return result;
         }
-        public static bool DrawFloat(string label, ref float f)
+        public static bool DrawFloat(string label, ref float f, float leftValue = 0, float rightValue = 1)
         {
             GUILayout.BeginHorizontal();
-            float newValue = NamedSliderContent(label, f, 0, 1, 300);
+            float newValue = NamedSliderContent(label, f, leftValue, rightValue, 300);
             GUILayout.EndHorizontal();
             bool result = newValue != f;
             f = newValue;
@@ -136,12 +152,12 @@ namespace EZ2FAI
         {
             if (labelWidth == 0)
             {
-                ButtonLabel(name, OpenDiscordUrl);
+                GUILayout.Label(name, GUILayout.Width(100f));
                 GUILayout.Space(4f);
             }
             else
             {
-                ButtonLabel(name, OpenDiscordUrl, GUILayout.Width(labelWidth));
+                GUILayout.Label(name, GUILayout.Width(labelWidth));
             }
             float newValue =
                 GUILayout.HorizontalSlider(
@@ -152,61 +168,10 @@ namespace EZ2FAI
             }
             GUILayout.Space(8f);
             if (valueFormat != "{0}")
-                ButtonLabel(string.Format(valueFormat, newValue), OpenDiscordUrl);
+                GUILayout.Label(string.Format(valueFormat, newValue));
             else float.TryParse(GUILayout.TextField(newValue.ToString("F4")), out newValue);
             GUILayout.FlexibleSpace();
             return newValue;
-        }
-        public static void ButtonLabel(string label, Action onPressed, params GUILayoutOption[] options)
-        {
-            if (GUILayout.Button(label, GUI.skin.label, options))
-                onPressed?.Invoke();
-        }
-        public static void OpenDiscordUrl()
-        {
-            //Application.OpenURL("https://discord.gg/tadjC4DyTn");
-        }
-        static string[] verbs = new string[]
-        {
-            "좋아해요",
-            "사랑해요",
-            "연모해요",
-            "흠모해요",
-            "사모해요",
-            "귀여워해요",
-            "존경해요",
-            "이뻐해요"
-        };
-        static string[] verbs2 = new string[]
-        {
-            "다이스키~♥",
-            "아이시떼루~♥",
-        };
-        public static string GetRandomVerb()
-        {
-            return verbs[(int)Math.Round(UnityEngine.Random.value * (verbs.Length - 1))];
-        }
-        public static string GetRandomVerb2()
-        {
-            return verbs2[(int)Math.Round(UnityEngine.Random.value * (verbs2.Length - 1))];
-        }
-        public static void EnableRainbow(TextMeshProUGUI text, VertexGradient? grad = null)
-        {
-            text.color = Color.white;
-            text.enableVertexGradient = true;
-            text.colorGradient = grad ??
-                new VertexGradient(
-                    new Color(1, 1, 0),
-                    new Color(0, 1, 1),
-                    new Color(1, 0, 1),
-                    new Color(0.5f, 1, 0.5f)
-                    );
-        }
-        public static void DisableRainbow(TextMeshProUGUI text)
-        {
-            text.color = Color.white;
-            text.colorGradient = new VertexGradient(Color.white);
-            text.enableVertexGradient = false;
         }
     }
 }
