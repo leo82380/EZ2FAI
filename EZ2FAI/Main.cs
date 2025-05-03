@@ -100,13 +100,13 @@ namespace EZ2FAI
             }
             GUILayout.EndHorizontal();
             
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.Label("<b>Check Point</b>");
-                Settings.IsCheckPoint = GUILayout.Toggle(Settings.IsCheckPoint, "");
-                GUILayout.FlexibleSpace();
-            }
-            GUILayout.EndHorizontal();
+            // GUILayout.BeginHorizontal();
+            // {
+            //     GUILayout.Label("<b>Check Point</b>");
+            //     Settings.IsCheckPoint = GUILayout.Toggle(Settings.IsCheckPoint, "");
+            //     GUILayout.FlexibleSpace();
+            // }
+            // GUILayout.EndHorizontal();
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {

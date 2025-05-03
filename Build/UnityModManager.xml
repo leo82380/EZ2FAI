@@ -984,6 +984,11 @@
             Some elements use FlexibleSpace for alignment. This option will disable it. [0.29.0]
             </summary>
         </member>
+        <member name="F:UnityModManagerNet.DrawAttribute.Unique">
+            <summary>
+            Set random number if the popup field takes control of similar others. [0.32.2]
+            </summary>
+        </member>
         <member name="T:UnityModManagerNet.HorizontalAttribute">
             <summary>
             Wraps container in GUILayout.BeginHorizontal() and GUILayout.EndHorizontal(). [0.22.14]
