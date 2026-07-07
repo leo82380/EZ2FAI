@@ -32,12 +32,15 @@ namespace EZ2FAI
         {
             nickText.text = nickName;
         }
-        public void SetJudgeAccuracy(scrController ctrl)
+
+        public void SetJudgeAccuracy(scrPlayer player)
         {
+            var mistakeTracker = player.marginTracker;
             for (int i = 0; i < 7; i++)
-                judgeCountTexts[i].text = ctrl.mistakesManager.GetHits((HitMargin)i).ToString();
-            judgePercentText.text = Math.Round(ctrl.mistakesManager.percentXAcc * 100, 2) + "%";
+                judgeCountTexts[i].text = mistakeTracker.GetHits((HitMargin)i).ToString();
+            judgePercentText.text = Math.Round(player.marginTracker.percentXAcc * 100, 2) + "%";
         }
+
         public void SetProgress(float fillAmount)
         {
             progressInner.fillAmount = fillAmount;

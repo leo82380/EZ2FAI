@@ -35,7 +35,7 @@ namespace EZ2FAI.Patches
             if (floor.nextfloor == null) return;
             double curBPM = GetRealBpm(floor, BpmUpdater.bpm) * BpmUpdater.playbackSpeed * BpmUpdater.pitch;
             bool isDongta = false;
-            Variables.TileBpm = BpmUpdater.bpm * scrController.instance.speed;
+            Variables.TileBpm = BpmUpdater.bpm * scrController.instance.playerOne.planetarySystem.speed;
             if (isDongta || BpmUpdater.beforedt) curBPM = BpmUpdater.beforebpm;
             Variables.CurBpm = curBPM;
             Variables.RecKPS = curBPM / 60;
@@ -43,7 +43,7 @@ namespace EZ2FAI.Patches
             BpmUpdater.beforebpm = curBPM;
 
             curBPM = GetRealBpm(floor, BpmUpdater.bpmwithoutpitch) * BpmUpdater.playbackSpeed;
-            Variables.TileBpmWithoutPitch = BpmUpdater.bpmwithoutpitch * scrController.instance.speed;
+            Variables.TileBpmWithoutPitch = BpmUpdater.bpmwithoutpitch * scrController.instance.playerOne.planetarySystem.speed;
             Variables.CurBpmWithoutPitch = curBPM;
             Variables.RecKPSWithoutPitch = curBPM / 60;
 
@@ -66,7 +66,7 @@ namespace EZ2FAI.Patches
             if (floor == null)
                 return bpm;
             if (floor.nextfloor == null)
-                return scrController.instance.speed * bpm;
+                return scrController.instance.playerOne.planetarySystem.speed * bpm;
             return 60.0 / (floor.nextfloor.entryTime - floor.entryTime);
         }
     }
@@ -110,7 +110,7 @@ namespace EZ2FAI.Patches
             float cur = bpm;
             if (__instance.currentSeqID != 0)
             {
-                double speed = scrController.instance.speed;
+                double speed = scrController.instance.playerOne.planetarySystem.speed;
                 cur = (float)(bpm * speed);
             }
             Variables.TileBpm = cur;
