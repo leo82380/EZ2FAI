@@ -78,10 +78,12 @@ namespace EZ2FAI
             
             GUILayout.Label("<b>Position</b>");
             changed |= DrawVector2(ref Settings.Position);
-            GUILayout.Label("<b>Scale</b>");
-            changed |= DrawVector2(ref Settings.Scale);
             GUILayout.Label("<b>Pixel Per Unit</b>");
             changed |= DrawFloat("", ref Settings.pixelsPerUnitMultiplier, 1f, 4f);
+            GUILayout.Label("<b>Title Font Size</b>");
+            if (DrawFloat("", ref Settings.TitleFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
+            GUILayout.Label("<b>Value Font Size</b>");
+            if (DrawFloat("", ref Settings.ValueFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
             if (changed) Panel.Apply(Settings.Position, Settings.Scale);
 
             GUILayout.BeginHorizontal();
@@ -119,7 +121,12 @@ namespace EZ2FAI
             else if (File.Exists(Settings.ProfileImage))
             {
                 Texture2D texture = new Texture2D(1, 1);
-                texture.LoadImage(File.ReadAllBytes(Settings.ProfileImage));
+                // Unity 6's ImageConversion.LoadImage gained ReadOnlySpan<byte> overloads.
+                // The game's net48 mscorlib can't resolve System.ReadOnlySpan<T> as a valid
+                // predefined type (missing [IsByRefLike]), which breaks compile-time overload
+                // resolution. Call the byte[] overload via reflection to sidestep that.
+                typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]) })
+                    ?.Invoke(null, new object[] { texture, File.ReadAllBytes(Settings.ProfileImage) });
                 var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
                 Panel.SetProfileImage(result);
             }

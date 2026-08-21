@@ -13,7 +13,7 @@
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\EZ2FAI\" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="D:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\EZ2FAI\" />
 	</Target>
 
 	<ItemGroup>
@@ -28,9 +28,6 @@
 	  </Reference>
 	  <Reference Include="Assembly-CSharp-firstpass">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-	  </Reference>
-	  <Reference Include="com.rlabrecque.steamworks.net">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
 	  </Reference>
 	  <Reference Include="DemiLib">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DemiLib.dll</HintPath>
@@ -153,9 +150,6 @@
 	  <Reference Include="System.IO.Hashing">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.IO.Hashing.dll</HintPath>
 	  </Reference>
-	  <Reference Include="System.Memory">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Memory.dll</HintPath>
-	  </Reference>
 	  <Reference Include="System.Net.Http" />
 	  <Reference Include="System.Numerics">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Numerics.dll</HintPath>
@@ -163,7 +157,6 @@
 	  <Reference Include="System.Numerics.Vectors">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Numerics.Vectors.dll</HintPath>
 	  </Reference>
-	  <Reference Include="System.Runtime" />
 	  <Reference Include="System.Runtime.CompilerServices.Unsafe">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
 	  </Reference>

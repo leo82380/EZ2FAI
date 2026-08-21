@@ -1,5 +1,6 @@
 ﻿using ADOFAI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -28,6 +29,10 @@ namespace EZ2FAI
         public TextMeshProUGUI curBPMText;
         public TextMeshProUGUI realBPMTitleText;
         public TextMeshProUGUI realBPMText;
+        private readonly List<TextMeshProUGUI> titleTexts = new List<TextMeshProUGUI>();
+        private readonly List<float> titleBaseSizes = new List<float>();
+        private readonly List<TextMeshProUGUI> valueTexts = new List<TextMeshProUGUI>();
+        private readonly List<float> valueBaseSizes = new List<float>();
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
@@ -36,8 +41,10 @@ namespace EZ2FAI
         public void SetJudgeAccuracy(scrPlayer player)
         {
             var mistakeTracker = player.marginTracker;
-            for (int i = 0; i < 7; i++)
-                judgeCountTexts[i].text = mistakeTracker.GetHits((HitMargin)i).ToString();
+            if (judgeCountTexts != null)
+                for (int i = 0; i < 7 && i < judgeCountTexts.Length; i++)
+                    if (judgeCountTexts[i] != null)
+                        judgeCountTexts[i].text = mistakeTracker.GetHits((HitMargin)i).ToString();
             judgePercentText.text = Math.Round(player.marginTracker.percentXAcc * 100, 2) + "%";
         }
 
@@ -71,8 +78,10 @@ namespace EZ2FAI
         }
         public void ResetJudgeAccuracy()
         {
-            for (int i = 0; i < 7; i++)
-                judgeCountTexts[i].text = "0";
+            if (judgeCountTexts != null)
+                for (int i = 0; i < 7 && i < judgeCountTexts.Length; i++)
+                    if (judgeCountTexts[i] != null)
+                        judgeCountTexts[i].text = "0";
             judgePercentText.text = "0%";
         }
         public void ResetProgress()
@@ -137,8 +146,136 @@ namespace EZ2FAI
             realBPMTitleText = rbpm.GetComponent<TextMeshProUGUI>();
             realBPMText = rbpm.Find("RealBPMText").GetComponent<TextMeshProUGUI>();
             judgeTitleText.text = "Accuracy";
+            FixJudgeLayout(bg);
+            RegisterTexts();
+            FixFonts();
+            ApplyFontSize();
             ResetMapName();
             ResetJudgeAccuracy();
+        }
+
+        // v3 / Unity 6: the bundled GridLayoutGroup (80x20 cells, 10px
+        // spacing, horizontal from upper-left) may not lay out on the Unity 6
+        // game, which would stack the 7 judge rows (TE/VE/EP/P/LP/VL/TL) at
+        // one spot. Replace it with an explicit manual layout that reproduces
+        // the same grid exactly, so the rows always sit side by side.
+        private void FixJudgeLayout(Transform bg)
+        {
+            try
+            {
+                var judgeGrid = bg.Find("Judge");
+                if (judgeGrid == null) return;
+                // Raise the whole judge block so the VL/TE/... labels sit on
+                // the same line as the "Accuracy" title (ref canvas 1920x1080;
+                // Accuracy top is at y=220, Judge block is 70 tall).
+                var judgeRT = judgeGrid as RectTransform;
+                if (judgeRT != null)
+                {
+                    judgeRT.anchorMin = new Vector2(0.5f, 0.5f);
+                    judgeRT.anchorMax = new Vector2(0.5f, 0.5f);
+                    judgeRT.pivot = new Vector2(0.5f, 0.5f);
+                    judgeRT.anchoredPosition = new Vector2(-37f, 285f);
+                    judgeRT.sizeDelta = new Vector2(750f, 70f);
+                }
+                var gridComp = judgeGrid.GetComponent<GridLayoutGroup>();
+                if (gridComp != null) Destroy(gridComp);
+                int i = 0;
+                foreach (Transform child in judgeGrid)
+                {
+                    var rt = child as RectTransform;
+                    if (rt != null)
+                    {
+                        rt.anchorMin = new Vector2(0, 0);
+                        rt.anchorMax = new Vector2(0, 0);
+                        rt.pivot = new Vector2(0, 1);
+                        rt.anchoredPosition = new Vector2(i * 90f, 0f);
+                        rt.sizeDelta = new Vector2(80f, 20f);
+                    }
+                    i++;
+                }
+            }
+            catch { }
+        }
+
+        // ADOFAI v3 / Unity 6 fix:
+        // EZ2FAI.assets was built with Unity 2022.3, and its bundled TMP font
+        // ("SB agr M SDF" TMP_FontAsset) fails to deserialize on the Unity 6
+        // game, leaving every TextMeshProUGUI with a null font. That throws a
+        // NullReferenceException in TMPro.MaterialReference..ctor on every
+        // canvas rebuild (spams the log every frame and can make the game
+        // stutter). Swap in the game's own localized TMP font instead, which
+        // is guaranteed to work because ADOFAI's own UI uses it.
+        private void FixFonts()
+        {
+            try
+            {
+                TMP_FontAsset font = null;
+                try
+                {
+                    RDString.Setup();
+                    font = RDString.fontData.fontTMP;
+                }
+                catch { }
+                if (font == null)
+                    font = RDConstants.data.latinFontTMPro;
+                if (font == null)
+                    return;
+                foreach (var t in new TextMeshProUGUI[] { nameText, nickText, mapNameText, authorText, judgeTitleText, judgePercentText, curBPMTitleText, curBPMText, realBPMTitleText, realBPMText })
+                    if (t != null) t.font = font;
+                for (int i = 0; i < 7; i++)
+                {
+                    if (judgeTitleTexts != null && judgeTitleTexts[i] != null) judgeTitleTexts[i].font = font;
+                    if (judgeCountTexts != null && judgeCountTexts[i] != null) judgeCountTexts[i].font = font;
+                }
+            }
+            catch { }
+        }
+
+        private void Register(TextMeshProUGUI t, bool isValue)
+        {
+            if (t == null) return;
+            if (isValue) { valueTexts.Add(t); valueBaseSizes.Add(t.fontSize); }
+            else { titleTexts.Add(t); titleBaseSizes.Add(t.fontSize); }
+        }
+
+        private void RegisterTexts()
+        {
+            // titles / labels
+            Register(nameText, false);
+            Register(nickText, false);
+            Register(mapNameText, false);
+            Register(authorText, false);
+            Register(judgeTitleText, false);
+            Register(curBPMTitleText, false);
+            Register(realBPMTitleText, false);
+            if (judgeTitleTexts != null)
+                for (int i = 0; i < judgeTitleTexts.Length; i++) Register(judgeTitleTexts[i], false);
+            // values / numbers
+            Register(judgePercentText, true);
+            Register(curBPMText, true);
+            Register(realBPMText, true);
+            if (judgeCountTexts != null)
+                for (int i = 0; i < judgeCountTexts.Length; i++) Register(judgeCountTexts[i], true);
+        }
+
+        public void ApplyFontSize()
+        {
+            float titleScale = Main.Settings != null ? Main.Settings.TitleFontSize : 1f;
+            float valueScale = Main.Settings != null ? Main.Settings.ValueFontSize : 1f;
+            for (int i = 0; i < titleTexts.Count; i++)
+            {
+                var t = titleTexts[i];
+                if (t == null) continue;
+                t.enableAutoSizing = false;
+                t.fontSize = titleBaseSizes[i] * titleScale;
+            }
+            for (int i = 0; i < valueTexts.Count; i++)
+            {
+                var t = valueTexts[i];
+                if (t == null) continue;
+                t.enableAutoSizing = false;
+                t.fontSize = valueBaseSizes[i] * valueScale;
+            }
         }
         void IDragHandler.OnDrag(PointerEventData eventData)
         {
