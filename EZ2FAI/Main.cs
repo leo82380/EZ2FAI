@@ -84,6 +84,28 @@ namespace EZ2FAI
             if (DrawFloat("", ref Settings.TitleFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
             GUILayout.Label("<b>Value Font Size</b>");
             if (DrawFloat("", ref Settings.ValueFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
+            GUILayout.Label("<b>Panel Opacity</b>");
+            if (DrawFloat("", ref Settings.PanelOpacity, 0.1f, 1f)) Panel.ApplyOpacity();
+
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Reset Position"))
+                {
+                    Settings.Position = new Vector2(0.16f, 0.1f);
+                    Settings.Scale = new Vector2(0.7f, 0.7f);
+                    Panel.Apply(Settings.Position, Settings.Scale);
+                }
+                if (GUILayout.Button("Reset Fonts / Opacity"))
+                {
+                    Settings.TitleFontSize = 1.5f;
+                    Settings.ValueFontSize = 1.5f;
+                    Settings.PanelOpacity = 1f;
+                    Panel.ApplyFontSize();
+                    Panel.ApplyOpacity();
+                }
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndHorizontal();
             if (changed) Panel.Apply(Settings.Position, Settings.Scale);
 
             GUILayout.BeginHorizontal();

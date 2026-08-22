@@ -1,5 +1,6 @@
 ﻿using ADOFAI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -57,20 +58,14 @@ namespace EZ2FAI
             string author = RichTagBreaker.Replace(data.author, string.Empty);
             string artist = RichTagBreaker.Replace(data.artist, string.Empty);
             string song = RichTagBreaker.Replace(data.song, string.Empty);
-            if (author == string.Empty)
-                author = "...";
-            if (artist == string.Empty)
-                artist = "...";
-            if (song == string.Empty)
-                song = "...";
             authorText.text = "BY " + author;
+            string title = artist + " - " + song;
             if (song.Length > 7 || artist.Length > 5)
-                mapNameText.text = 
-                    (artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist) + 
-                    " - " + 
+                title =
+                    (artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist) +
+                    " - " +
                     (song.Length > 7 ? song.Substring(0, 7) + "..." : song);
-            else
-                mapNameText.text = artist + " - " + song;
+            mapNameText.text = title;
         }
         public void SetProfileImage(Sprite sprite)
         {
@@ -90,8 +85,8 @@ namespace EZ2FAI
         }
         public void ResetMapName()
         {
-            mapNameText.text = "...";
-            authorText.text = "...";
+            mapNameText.text = "";
+            authorText.text = "";
         }
         public void Apply(Vector2 position, Vector2 scale)
         {
@@ -147,52 +142,80 @@ namespace EZ2FAI
             realBPMText = rbpm.Find("RealBPMText").GetComponent<TextMeshProUGUI>();
             judgeTitleText.text = "Accuracy";
             FixJudgeLayout(bg);
+            FixMapNamePosition(bg);
             RegisterTexts();
             FixFonts();
             ApplyFontSize();
+            ApplyOpacity();
             ResetMapName();
             ResetJudgeAccuracy();
         }
 
-        // v3 / Unity 6: the bundled GridLayoutGroup (80x20 cells, 10px
-        // spacing, horizontal from upper-left) may not lay out on the Unity 6
-        // game, which would stack the 7 judge rows (TE/VE/EP/P/LP/VL/TL) at
-        // one spot. Replace it with an explicit manual layout that reproduces
-        // the same grid exactly, so the rows always sit side by side.
+        // Panel transparency: fade the background artwork (and progress bar)
+        // so the game shows through, while the text stays readable.
+        public void ApplyOpacity()
+        {
+            float a = Main.Settings != null ? Mathf.Clamp01(Main.Settings.PanelOpacity) : 1f;
+            if (background != null)
+            {
+                var c = background.color;
+                c.a = a;
+                background.color = c;
+            }
+            if (progressOuter != null)
+            {
+                var c = progressOuter.color;
+                c.a = a;
+                progressOuter.color = c;
+            }
+            if (progressInner != null)
+            {
+                var c = progressInner.color;
+                c.a = a;
+                progressInner.color = c;
+            }
+        }
+
+        // v3 fix: keep the judge block exactly where it was designed (X and the
+        // GridLayoutGroup rows untouched), and only shift it vertically so the
+        // VL/TE/... labels sit on the same line as the "Accuracy" title. Done
+        // in world space after the first layout frame, so it is correct no
+        // matter the resolution or CanvasScaler scaling.
         private void FixJudgeLayout(Transform bg)
+        {
+            StartCoroutine(FixJudgeLayoutRoutine(bg));
+        }
+
+        private IEnumerator FixJudgeLayoutRoutine(Transform bg)
+        {
+            yield return null; // wait one frame for the canvas to be laid out
+            try
+            {
+                var judgeRT = bg.Find("Judge") as RectTransform;
+                var judgeRate = bg.Find("JudgeRate") as RectTransform;
+                if (judgeRT == null || judgeRate == null) yield break;
+                Vector3 judgePos = judgeRT.position;
+                Vector3 accPos = judgeRate.position;
+                // The rows are laid out from the block's top edge; align that
+                // top edge with Accuracy's top edge so the labels share a line.
+                float topHalf = judgeRT.rect.height * 0.5f * judgeRT.lossyScale.y;
+                judgeRT.position = new Vector3(judgePos.x, accPos.y - topHalf, judgePos.z);
+            }
+            catch { }
+        }
+
+        // The map name / author sit too far right (right-anchored at -286);
+        // nudge them left a bit for a nicer look.
+        private void FixMapNamePosition(Transform bg)
         {
             try
             {
-                var judgeGrid = bg.Find("Judge");
-                if (judgeGrid == null) return;
-                // Raise the whole judge block so the VL/TE/... labels sit on
-                // the same line as the "Accuracy" title (ref canvas 1920x1080;
-                // Accuracy top is at y=220, Judge block is 70 tall).
-                var judgeRT = judgeGrid as RectTransform;
-                if (judgeRT != null)
-                {
-                    judgeRT.anchorMin = new Vector2(0.5f, 0.5f);
-                    judgeRT.anchorMax = new Vector2(0.5f, 0.5f);
-                    judgeRT.pivot = new Vector2(0.5f, 0.5f);
-                    judgeRT.anchoredPosition = new Vector2(-37f, 285f);
-                    judgeRT.sizeDelta = new Vector2(750f, 70f);
-                }
-                var gridComp = judgeGrid.GetComponent<GridLayoutGroup>();
-                if (gridComp != null) Destroy(gridComp);
-                int i = 0;
-                foreach (Transform child in judgeGrid)
-                {
-                    var rt = child as RectTransform;
-                    if (rt != null)
-                    {
-                        rt.anchorMin = new Vector2(0, 0);
-                        rt.anchorMax = new Vector2(0, 0);
-                        rt.pivot = new Vector2(0, 1);
-                        rt.anchoredPosition = new Vector2(i * 90f, 0f);
-                        rt.sizeDelta = new Vector2(80f, 20f);
-                    }
-                    i++;
-                }
+                var map = bg.Find("MapName") as RectTransform;
+                var author = bg.Find("Author") as RectTransform;
+                if (map != null)
+                    map.anchoredPosition = new Vector2(-390f, map.anchoredPosition.y);
+                if (author != null)
+                    author.anchoredPosition = new Vector2(-390f, author.anchoredPosition.y);
             }
             catch { }
         }

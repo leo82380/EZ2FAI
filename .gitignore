@@ -398,3 +398,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 *.dll
+
+# Some packed version
+EZ2FAI_v2.3.0修复版.zip
+EZ2FAI_v2.3.1_v3.3.1fix.zip
