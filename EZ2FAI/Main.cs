@@ -149,17 +149,14 @@ namespace EZ2FAI
             try
             {
                 Texture2D texture = new Texture2D(1, 1);
-                // Unity 6's ImageConversion.LoadImage gained ReadOnlySpan<byte> overloads.
-                // The game's net48 mscorlib can't resolve System.ReadOnlySpan<T> as a valid
-                // predefined type (missing [IsByRefLike]), which breaks compile-time overload
-                // resolution. Call the byte[] overload via reflection to sidestep that.
-                var method = typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]) });
+                var method = typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]), typeof(bool) });
                 if (method == null)
                 {
                     Panel.SetProfileImage(null);
                     return;
                 }
-                bool ok = (bool)method.Invoke(null, new object[] { texture, File.ReadAllBytes(Settings.ProfileImage) });
+                var bytes = File.ReadAllBytes(Settings.ProfileImage);
+                bool ok = (bool)method.Invoke(null, new object[] { texture, bytes, false });
                 if (!ok || texture.width <= 1)
                 {
                     Panel.SetProfileImage(null);
