@@ -1,0 +1,9 @@
+{
+    "ID": "EZ2FAI",
+    "DisplayName": "EZ2FAI",
+    "Author": "Leo82380",
+    "Version": "2.4.0",
+    "AssemblyName": "EZ2FAI.dll",
+    "EntryMethod": "EZ2FAI.Main.Load",
+    "HomePage": "https://github.com/leo82380/EZ2FAI/"
+}

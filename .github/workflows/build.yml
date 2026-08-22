@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PROJECT_PATH: EZ2FAI/EZ2FAI.csproj
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Game DLLs ─────────────────────────────────────────────────────
+      # EZ2FAI compiles against ADOFAI's game DLLs, which are NOT committed to
+      # this repo (they are the game's binaries and are gitignored). To build
+      # on CI you must host the game's `Managed` folder in a companion repo
+      # and expose it to this workflow (same pattern as JipperOverlayer):
+      #
+      #   1. Create a (private) repo, e.g. `adofai-libs`, and put the DLLs
+      #      from `<game>\A Dance of Fire and Ice_Data\Managed\` in it.
+      #   2. Add a repository VARIABLE  GAME_LIBS_REPO  = "<owner>/adofai-libs"
+      #   3. Add a repository SECRET     LIBS_ACCESS_TOKEN = a PAT with read
+      #      access to that repo (repo scope).
+      #
+      # Until those are configured this step is skipped and the build is
+      # skipped too (the job stays green). Configure once, then it auto-builds.
+      - name: Checkout game DLLs
+        if: ${{ vars.GAME_LIBS_REPO != '' }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.GAME_LIBS_REPO }}
+          token: ${{ secrets.LIBS_ACCESS_TOKEN }}
+          path: Libs
+
+      - name: Setup .NET
+        if: ${{ vars.GAME_LIBS_REPO != '' }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Build (Release)
+        if: ${{ vars.GAME_LIBS_REPO != '' }}
+        run: dotnet build ${{ env.PROJECT_PATH }} -c Release -p:ManagedDir="${{ github.workspace }}\Libs" -p:GamePath=
+
+      - name: Upload artifact
+        if: ${{ vars.GAME_LIBS_REPO != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: EZ2FAI-mod
+          path: |
+            Build/EZ2FAI.dll
+            Info.json

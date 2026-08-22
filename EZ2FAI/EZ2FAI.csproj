@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
@@ -14,6 +14,10 @@
 		     Override per machine, e.g.  dotnet build -p:GamePath="D:\...\A Dance of Fire and Ice".
 		     The copy is skipped when the Mods folder is absent, so CI / other setups never fail. -->
 		<GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice</GamePath>
+		<!-- Game Managed folder containing the reference DLLs. Defaults to the local
+		     install; CI overrides it with -p:ManagedDir=... pointing at the checked-out
+		     game libs, so the build is portable and works on a fresh runner. -->
+		<ManagedDir Condition="'$(ManagedDir)' == ''">..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed</ManagedDir>
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="Exists('$(GamePath)\Mods\EZ2FAI')">
@@ -22,584 +26,584 @@
 
 	<ItemGroup>
 	  <Reference Include="0Harmony">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityModManager\0Harmony.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityModManager\0Harmony.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Accessibility">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Accessibility.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Accessibility.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Assembly-CSharp">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Assembly-CSharp.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Assembly-CSharp-firstpass">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Assembly-CSharp-firstpass.dll</HintPath>
 	  </Reference>
 	  <Reference Include="DemiLib">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DemiLib.dll</HintPath>
+	    <HintPath>$(ManagedDir)\DemiLib.dll</HintPath>
 	  </Reference>
 	  <Reference Include="DOTween">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DOTween.dll</HintPath>
+	    <HintPath>$(ManagedDir)\DOTween.dll</HintPath>
 	  </Reference>
 	  <Reference Include="DOTweenPro">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DOTweenPro.dll</HintPath>
+	    <HintPath>$(ManagedDir)\DOTweenPro.dll</HintPath>
 	  </Reference>
 	  <Reference Include="I18N">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\I18N.dll</HintPath>
+	    <HintPath>$(ManagedDir)\I18N.dll</HintPath>
 	  </Reference>
 	  <Reference Include="I18N.CJK">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\I18N.CJK.dll</HintPath>
+	    <HintPath>$(ManagedDir)\I18N.CJK.dll</HintPath>
 	  </Reference>
 	  <Reference Include="I18N.MidEast">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\I18N.MidEast.dll</HintPath>
+	    <HintPath>$(ManagedDir)\I18N.MidEast.dll</HintPath>
 	  </Reference>
 	  <Reference Include="I18N.Other">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\I18N.Other.dll</HintPath>
+	    <HintPath>$(ManagedDir)\I18N.Other.dll</HintPath>
 	  </Reference>
 	  <Reference Include="I18N.Rare">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\I18N.Rare.dll</HintPath>
+	    <HintPath>$(ManagedDir)\I18N.Rare.dll</HintPath>
 	  </Reference>
 	  <Reference Include="I18N.West">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\I18N.West.dll</HintPath>
+	    <HintPath>$(ManagedDir)\I18N.West.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Mono.Data.Sqlite">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Mono.Data.Sqlite.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Mono.Data.Sqlite.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Mono.Posix">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Mono.Posix.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Mono.Posix.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Mono.Security">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Mono.Security.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Mono.Security.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Mono.WebBrowser">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Mono.WebBrowser.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Mono.WebBrowser.dll</HintPath>
 	  </Reference>
 	  <Reference Include="mscorlib">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\mscorlib.dll</HintPath>
+	    <HintPath>$(ManagedDir)\mscorlib.dll</HintPath>
 	  </Reference>
 	  <Reference Include="netstandard">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\netstandard.dll</HintPath>
+	    <HintPath>$(ManagedDir)\netstandard.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Newtonsoft.Json">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Newtonsoft.Json.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Newtonsoft.Json.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Novell.Directory.Ldap">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Novell.Directory.Ldap.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Novell.Directory.Ldap.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Ookii.Dialogs">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Ookii.Dialogs.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Ookii.Dialogs.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Purchasing.Common">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Purchasing.Common.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Purchasing.Common.dll</HintPath>
 	  </Reference>
 	  <Reference Include="RDTools">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\RDTools.dll</HintPath>
+	    <HintPath>$(ManagedDir)\RDTools.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Rewired_Core">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Rewired_Core.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Rewired_Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Rewired_Windows">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Rewired_Windows.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Rewired_Windows.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Rewired_Windows_Functions">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Rewired_Windows_Functions.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Rewired_Windows_Functions.dll</HintPath>
 	  </Reference>
 	  <Reference Include="SkyHook.Unity">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\SkyHook.Unity.dll</HintPath>
+	    <HintPath>$(ManagedDir)\SkyHook.Unity.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Buffers">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Buffers.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Buffers.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Collections.Immutable">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Collections.Immutable.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Collections.Immutable.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.ComponentModel.Composition">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.ComponentModel.Composition.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.ComponentModel.Composition.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.ComponentModel.DataAnnotations">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.ComponentModel.DataAnnotations.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.ComponentModel.DataAnnotations.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Configuration">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Configuration.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Configuration.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Core">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Core.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Data">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Data.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Data.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Data.DataSetExtensions">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Data.DataSetExtensions.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Data.DataSetExtensions.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Design">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Design.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Design.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.DirectoryServices">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.DirectoryServices.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.DirectoryServices.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Drawing">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Drawing.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Drawing.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Drawing.Design">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Drawing.Design.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Drawing.Design.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.EnterpriseServices">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.EnterpriseServices.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.EnterpriseServices.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.IO.Compression" />
 	  <Reference Include="System.IO.Compression.FileSystem">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.IO.Compression.FileSystem.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.IO.Compression.FileSystem.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.IO.Hashing">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.IO.Hashing.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.IO.Hashing.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Net.Http" />
 	  <Reference Include="System.Numerics">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Numerics.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Numerics.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Numerics.Vectors">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Numerics.Vectors.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Numerics.Vectors.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Runtime.CompilerServices.Unsafe">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Runtime.Serialization">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Runtime.Serialization.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Runtime.Serialization.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Runtime.Serialization.Formatters.Soap">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Runtime.Serialization.Formatters.Soap.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Runtime.Serialization.Formatters.Soap.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Security">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Security.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Security.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.ServiceModel.Internals">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.ServiceModel.Internals.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.ServiceModel.Internals.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Text.Encodings.Web">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Text.Encodings.Web.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Text.Encodings.Web.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Text.Json">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Text.Json.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Text.Json.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Threading.Tasks.Extensions">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Threading.Tasks.Extensions.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Threading.Tasks.Extensions.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Transactions">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Transactions.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Transactions.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.ValueTuple">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.ValueTuple.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.ValueTuple.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Web">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Web.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Web.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Web.ApplicationServices">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Web.ApplicationServices.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Web.ApplicationServices.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Web.Services">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Web.Services.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Web.Services.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Windows.Forms" />
 	  <Reference Include="System.Xml">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Xml.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Xml.dll</HintPath>
 	  </Reference>
 	  <Reference Include="System.Xml.Linq">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Xml.Linq.dll</HintPath>
+	    <HintPath>$(ManagedDir)\System.Xml.Linq.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Addressables">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Addressables.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Addressables.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Burst">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Burst.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Burst.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Burst.Unsafe">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Burst.Unsafe.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Burst.Unsafe.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Collections">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Collections.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Collections.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Collections.LowLevel.ILSupport">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.InternalAPIEngineBridge.004">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.InternalAPIEngineBridge.004.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.InternalAPIEngineBridge.004.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Mathematics">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Mathematics.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Mathematics.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.MemoryProfiler">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.MemoryProfiler.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.MemoryProfiler.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Profiling.Core">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Profiling.Core.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Profiling.Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.AppleMacosStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.AppleMacosStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.AppleMacosStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.AppleStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.AppleStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.AppleStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.Codeless">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.Codeless.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.Codeless.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.SecurityCore">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.SecurityCore.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.SecurityCore.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.SecurityStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.SecurityStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.SecurityStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.Stores">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.Stores.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.Stores.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Purchasing.Utilities">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Purchasing.Utilities.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Purchasing.Utilities.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.ResourceManager">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.ResourceManager.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.ResourceManager.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.ScriptableBuildPipeline">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.ScriptableBuildPipeline.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.ScriptableBuildPipeline.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Analytics">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Analytics.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Analytics.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Components">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Components.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Components.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Configuration">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Configuration.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Configuration.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Device">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Device.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Device.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Environments">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Environments.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Environments.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Environments.Internal">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Environments.Internal.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Environments.Internal.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Internal">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Internal.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Internal.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Networking">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Networking.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Networking.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Registration">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Registration.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Registration.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Scheduler">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Scheduler.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Scheduler.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Telemetry">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Telemetry.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Telemetry.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.Services.Core.Threading">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.Services.Core.Threading.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.Services.Core.Threading.dll</HintPath>
 	  </Reference>
 	  <Reference Include="Unity.TextMeshPro">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+	    <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
 	  </Reference>  <Reference Include="UnityFileDialog">
-    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityFileDialog.dll</HintPath>
+    <HintPath>$(ManagedDir)\UnityFileDialog.dll</HintPath>
   </Reference>	  <Reference Include="UnityEngine">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AccessibilityModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AccessibilityModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AdaptivePerformanceModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AdaptivePerformanceModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AdaptivePerformanceModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AIModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AIModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AMDModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AMDModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AMDModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AndroidJNIModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AndroidJNIModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AndroidJNIModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AnimationModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AnimationModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ARModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ARModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ARModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AssetBundleModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AudioModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ClothModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ClothModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ClusterInputModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ClusterInputModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ClusterRendererModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ClusterRendererModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ContentLoadModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ContentLoadModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ContentLoadModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.CoreModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.CrashReportingModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.CrashReportingModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.DirectorModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.DirectorModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.DSPGraphModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.DSPGraphModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.DSPGraphModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.GameCenterModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.GameCenterModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.GameCenterModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.GIModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.GIModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.GIModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.GraphicsStateCollectionSerializerModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.GraphicsStateCollectionSerializerModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.GraphicsStateCollectionSerializerModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.GridModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.GridModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.GridModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.HierarchyCoreModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.HierarchyCoreModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.HierarchyCoreModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.HierarchyModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.HierarchyModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.HierarchyModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.HotReloadModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.HotReloadModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.HotReloadModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.IdentifiersModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.IdentifiersModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.IdentifiersModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ImageConversionModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ImageConversionModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.IMGUIModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.InputForUIModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.InputForUIModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.InputForUIModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.InputLegacyModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.InputLegacyModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.InputModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.InputModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.InsightsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.InsightsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.InsightsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.JSONSerializeModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.JSONSerializeModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.LocalizationModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.LocalizationModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.LocalizationModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.MarshallingModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.MarshallingModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.MarshallingModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.MultiplayerModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.MultiplayerModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.MultiplayerModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.NVIDIAModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.NVIDIAModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.NVIDIAModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ParticleSystemModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ParticleSystemModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.PerformanceReportingModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.PerformanceReportingModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.PerformanceReportingModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Physics2DModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Physics2DModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.PhysicsBackendPhysXModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.PhysicsBackendPhysXModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.PhysicsBackendPhysXModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.PhysicsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ProfilerModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ProfilerModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.PropertiesModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.PropertiesModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.PropertiesModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.AppleCore">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.AppleCore.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.AppleCore.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.AppleMacosStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.AppleMacosStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.AppleMacosStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.AppleStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.AppleStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.AppleStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.Codeless">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.Codeless.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.Codeless.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.SecurityCore">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.SecurityCore.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.SecurityCore.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.SecurityStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.SecurityStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.SecurityStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.Stores">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.Stores.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.Stores.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.WinRTCore">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.WinRTCore.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.WinRTCore.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.Purchasing.WinRTStub">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.Purchasing.WinRTStub.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.Purchasing.WinRTStub.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.RenderAs2DModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.RenderAs2DModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.RenderAs2DModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ScreenCaptureModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ScreenCaptureModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ShaderRuntimeModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ShaderRuntimeModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ShaderRuntimeModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.ShaderVariantAnalyticsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.ShaderVariantAnalyticsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.ShaderVariantAnalyticsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.SharedInternalsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.SharedInternalsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.SpriteMaskModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.SpriteMaskModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.SpriteShapeModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.SpriteShapeModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.StreamingModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.StreamingModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.SubstanceModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.SubstanceModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.SubsystemsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.SubsystemsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TerrainModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TerrainModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TerrainPhysicsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TerrainPhysicsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TextCoreFontEngineModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TextCoreFontEngineModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TextCoreFontEngineModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TextCoreTextEngineModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TextCoreTextEngineModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TextCoreTextEngineModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TextRenderingModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TilemapModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TilemapModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TilemapModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.TLSModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.TLSModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.TLSModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UI">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UI.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UIElementsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UIElementsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UIModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UmbraModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UmbraModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityAnalyticsCommonModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityAnalyticsCommonModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityAnalyticsCommonModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityAnalyticsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityAnalyticsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityConnectModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityConnectModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityConnectModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityConsentModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityConsentModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityConsentModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityCurlModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityCurlModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityCurlModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityTestProtocolModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityTestProtocolModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityTestProtocolModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityWebRequestModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.VectorGraphicsModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.VectorGraphicsModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.VectorGraphicsModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.VehiclesModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.VehiclesModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.VFXModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.VFXModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.VideoModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.VideoModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.VirtualTexturingModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.VirtualTexturingModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.VirtualTexturingModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.VRModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.VRModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.WindModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.WindModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.WindModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.XRModule">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.XRModule.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityEngine.XRModule.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityFileDialog">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityFileDialog.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityFileDialog.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityModManager">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityModManager\UnityModManager.dll</HintPath>
+	    <HintPath>$(ManagedDir)\UnityModManager\UnityModManager.dll</HintPath>
 	  </Reference>
 	  <Reference Include="XTUtilities">
-	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\XTUtilities.dll</HintPath>
+	    <HintPath>$(ManagedDir)\XTUtilities.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 

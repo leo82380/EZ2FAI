@@ -138,14 +138,6 @@ namespace EZ2FAI
                 GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            {
-                if (GUILayout.Button("Open GitHub: https://github.com/leo82380/EZ2FAI/"))
-                    Application.OpenURL("https://github.com/leo82380/EZ2FAI/");
-                GUILayout.FlexibleSpace();
-            }
-            GUILayout.EndHorizontal();
             
             // GUILayout.BeginHorizontal();
             // {
