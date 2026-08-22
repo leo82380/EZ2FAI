@@ -16,6 +16,11 @@ namespace EZ2FAI
         public static Harmony Harmony { get; private set; }
         public static Settings Settings { get; private set; }
         public static EZ2FAIPanel Panel { get; private set; }
+        // Runtime-created profile image assets (from LoadImage + Sprite.Create).
+        // Tracked so we can destroy the previous ones when the image changes,
+        // otherwise repeated changes leak native texture/sprite memory.
+        private static Sprite runtimeProfileSprite;
+        private static Texture2D runtimeProfileTexture;
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -40,6 +45,7 @@ namespace EZ2FAI
             {
                 UnityEngine.Object.Destroy(Panel.gameObject);
                 Panel = null;
+                DestroyRuntimeProfile();
                 Harmony.UnpatchAll(Harmony.Id);
                 Harmony = null;
             }
@@ -157,6 +163,7 @@ namespace EZ2FAI
             if (string.IsNullOrEmpty(Settings.ProfileImage) || !File.Exists(Settings.ProfileImage))
             {
                 Panel.SetProfileImage(null);
+                DestroyRuntimeProfile();
                 return;
             }
             Texture2D texture = new Texture2D(1, 1);
@@ -167,6 +174,7 @@ namespace EZ2FAI
                 {
                     UnityEngine.Object.Destroy(texture);
                     Panel.SetProfileImage(null);
+                    DestroyRuntimeProfile();
                     return;
                 }
                 var bytes = File.ReadAllBytes(Settings.ProfileImage);
@@ -175,15 +183,34 @@ namespace EZ2FAI
                 {
                     UnityEngine.Object.Destroy(texture);
                     Panel.SetProfileImage(null);
+                    DestroyRuntimeProfile();
                     return;
                 }
                 var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
+                // Assign the new sprite first, then destroy the previous runtime assets.
                 Panel.SetProfileImage(result);
+                DestroyRuntimeProfile();
+                runtimeProfileSprite = result;
+                runtimeProfileTexture = texture;
             }
             catch
             {
                 UnityEngine.Object.Destroy(texture);
                 Panel.SetProfileImage(null);
+                DestroyRuntimeProfile();
+            }
+        }
+        private static void DestroyRuntimeProfile()
+        {
+            if (runtimeProfileSprite != null)
+            {
+                UnityEngine.Object.Destroy(runtimeProfileSprite);
+                runtimeProfileSprite = null;
+            }
+            if (runtimeProfileTexture != null)
+            {
+                UnityEngine.Object.Destroy(runtimeProfileTexture);
+                runtimeProfileTexture = null;
             }
         }
         public static bool DrawVector2(ref Vector2 vec2)
