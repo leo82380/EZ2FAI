@@ -15,9 +15,9 @@
 		     The copy is skipped when the Mods folder is absent, so CI / other setups never fail. -->
 		<GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice</GamePath>
 		<!-- Game Managed folder containing the reference DLLs. Defaults to the local
-		     install; CI overrides it with -p:ManagedDir=... pointing at the checked-out
-		     game libs, so the build is portable and works on a fresh runner. -->
-		<ManagedDir Condition="'$(ManagedDir)' == ''">..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed</ManagedDir>
+		     install (derived from GamePath); CI can override it with -p:ManagedDir=...
+		     pointing at the checked-out game libs, so the build is portable. -->
+		<ManagedDir Condition="'$(ManagedDir)' == ''">$(GamePath)\A Dance of Fire and Ice_Data\Managed</ManagedDir>
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="Exists('$(GamePath)\Mods\EZ2FAI')">
@@ -309,9 +309,8 @@
 	  </Reference>
 	  <Reference Include="Unity.TextMeshPro">
 	    <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
-	  </Reference>  <Reference Include="UnityFileDialog">
-    <HintPath>$(ManagedDir)\UnityFileDialog.dll</HintPath>
-  </Reference>	  <Reference Include="UnityEngine">
+	  </Reference>
+	  <Reference Include="UnityEngine">
 	    <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AccessibilityModule">

@@ -290,8 +290,8 @@ namespace EZ2FAI
 
         public void ApplyFontSize()
         {
-            float titleScale = Main.Settings != null ? Main.Settings.TitleFontSize : 1f;
-            float valueScale = Main.Settings != null ? Main.Settings.ValueFontSize : 1f;
+            float titleScale = Main.Settings != null ? Mathf.Clamp(Main.Settings.TitleFontSize, 0.5f, 3f) : 1f;
+            float valueScale = Main.Settings != null ? Mathf.Clamp(Main.Settings.ValueFontSize, 0.5f, 3f) : 1f;
             for (int i = 0; i < titleTexts.Count; i++)
             {
                 var t = titleTexts[i];
