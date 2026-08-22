@@ -159,12 +159,13 @@ namespace EZ2FAI
                 Panel.SetProfileImage(null);
                 return;
             }
+            Texture2D texture = new Texture2D(1, 1);
             try
             {
-                Texture2D texture = new Texture2D(1, 1);
                 var method = typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]), typeof(bool) });
                 if (method == null)
                 {
+                    UnityEngine.Object.Destroy(texture);
                     Panel.SetProfileImage(null);
                     return;
                 }
@@ -172,6 +173,7 @@ namespace EZ2FAI
                 bool ok = (bool)method.Invoke(null, new object[] { texture, bytes, false });
                 if (!ok || texture.width <= 1)
                 {
+                    UnityEngine.Object.Destroy(texture);
                     Panel.SetProfileImage(null);
                     return;
                 }
@@ -180,6 +182,7 @@ namespace EZ2FAI
             }
             catch
             {
+                UnityEngine.Object.Destroy(texture);
                 Panel.SetProfileImage(null);
             }
         }

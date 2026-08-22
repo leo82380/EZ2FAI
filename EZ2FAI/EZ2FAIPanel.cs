@@ -245,7 +245,10 @@ namespace EZ2FAI
                     RDString.Setup();
                     font = RDString.fontData.fontTMP;
                 }
-                catch { }
+                catch (System.Exception e)
+                {
+                    if (Main.Logger != null) Main.Logger.Log("FixFonts: RDString.fontData.fontTMP unavailable: " + e.Message);
+                }
                 if (font == null)
                     font = RDConstants.data.latinFontTMPro;
                 if (font == null)
@@ -258,7 +261,10 @@ namespace EZ2FAI
                     if (judgeCountTexts != null && judgeCountTexts[i] != null) judgeCountTexts[i].font = font;
                 }
             }
-            catch { }
+            catch (System.Exception e)
+            {
+                if (Main.Logger != null) Main.Logger.Log("FixFonts failed: " + e.Message);
+            }
         }
 
         private void Register(TextMeshProUGUI t, bool isValue)
