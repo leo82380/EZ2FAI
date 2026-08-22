@@ -58,13 +58,20 @@ namespace EZ2FAI
             string author = RichTagBreaker.Replace(data.author, string.Empty);
             string artist = RichTagBreaker.Replace(data.artist, string.Empty);
             string song = RichTagBreaker.Replace(data.song, string.Empty);
-            authorText.text = "BY " + author;
-            string title = artist + " - " + song;
-            if (song.Length > 7 || artist.Length > 5)
-                title =
-                    (artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist) +
-                    " - " +
-                    (song.Length > 7 ? song.Substring(0, 7) + "..." : song);
+            authorText.text = string.IsNullOrEmpty(author) ? "" : "BY " + author;
+            string title;
+            if (!string.IsNullOrEmpty(artist) && !string.IsNullOrEmpty(song))
+            {
+                string a = artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist;
+                string s = song.Length > 7 ? song.Substring(0, 7) + "..." : song;
+                title = a + " - " + s;
+            }
+            else if (!string.IsNullOrEmpty(song))
+                title = song.Length > 7 ? song.Substring(0, 7) + "..." : song;
+            else if (!string.IsNullOrEmpty(artist))
+                title = artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist;
+            else
+                title = "";
             mapNameText.text = title;
         }
         public void SetProfileImage(Sprite sprite)

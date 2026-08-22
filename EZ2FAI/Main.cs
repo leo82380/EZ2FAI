@@ -78,6 +78,8 @@ namespace EZ2FAI
             
             GUILayout.Label("<b>Position</b>");
             changed |= DrawVector2(ref Settings.Position);
+            GUILayout.Label("<b>Scale</b>");
+            changed |= DrawVector2(ref Settings.Scale);
             GUILayout.Label("<b>Pixel Per Unit</b>");
             changed |= DrawFloat("", ref Settings.pixelsPerUnitMultiplier, 1f, 4f);
             GUILayout.Label("<b>Title Font Size</b>");
@@ -138,19 +140,37 @@ namespace EZ2FAI
         }
         public static void SetProfileImage()
         {
-            if (string.IsNullOrEmpty(Settings.ProfileImage))
+            if (Panel == null) return;
+            if (string.IsNullOrEmpty(Settings.ProfileImage) || !File.Exists(Settings.ProfileImage))
+            {
                 Panel.SetProfileImage(null);
-            else if (File.Exists(Settings.ProfileImage))
+                return;
+            }
+            try
             {
                 Texture2D texture = new Texture2D(1, 1);
                 // Unity 6's ImageConversion.LoadImage gained ReadOnlySpan<byte> overloads.
                 // The game's net48 mscorlib can't resolve System.ReadOnlySpan<T> as a valid
                 // predefined type (missing [IsByRefLike]), which breaks compile-time overload
                 // resolution. Call the byte[] overload via reflection to sidestep that.
-                typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]) })
-                    ?.Invoke(null, new object[] { texture, File.ReadAllBytes(Settings.ProfileImage) });
+                var method = typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]) });
+                if (method == null)
+                {
+                    Panel.SetProfileImage(null);
+                    return;
+                }
+                bool ok = (bool)method.Invoke(null, new object[] { texture, File.ReadAllBytes(Settings.ProfileImage) });
+                if (!ok || texture.width <= 1)
+                {
+                    Panel.SetProfileImage(null);
+                    return;
+                }
                 var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
                 Panel.SetProfileImage(result);
+            }
+            catch
+            {
+                Panel.SetProfileImage(null);
             }
         }
         public static bool DrawVector2(ref Vector2 vec2)

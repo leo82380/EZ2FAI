@@ -10,10 +10,14 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 		<NoStdLib>true</NoStdLib>
+		<!-- Game install folder used by the optional PostBuild deploy step.
+		     Override per machine, e.g.  dotnet build -p:GamePath="D:\...\A Dance of Fire and Ice".
+		     The copy is skipped when the Mods folder is absent, so CI / other setups never fail. -->
+		<GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice</GamePath>
 	</PropertyGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="D:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\EZ2FAI\" />
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="Exists('$(GamePath)\Mods\EZ2FAI')">
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\Mods\EZ2FAI\" />
 	</Target>
 
 	<ItemGroup>
