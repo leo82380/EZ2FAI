@@ -72,6 +72,19 @@ namespace EZ2FAI
                     SetProfileImage();
                 }
 
+                if (GUILayout.Button("Choose..."))
+                {
+                    string picked = UnityFileDialog.FileBrowser.PickFile(
+                        filterName: "Images (jpg/jpeg/png)",
+                        filterExtensions: new[] { "jpg", "jpeg", "png" },
+                        title: "Select Profile Image");
+                    if (!string.IsNullOrEmpty(picked))
+                    {
+                        Settings.ProfileImage = picked;
+                        SetProfileImage();
+                    }
+                }
+
                 GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();
@@ -122,6 +135,14 @@ namespace EZ2FAI
             {
                 GUILayout.Label("<b>Drag Enabled</b>");
                 Settings.DragEnabled = GUILayout.Toggle(Settings.DragEnabled, "");
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Open GitHub: https://github.com/leo82380/EZ2FAI/"))
+                    Application.OpenURL("https://github.com/leo82380/EZ2FAI/");
                 GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();

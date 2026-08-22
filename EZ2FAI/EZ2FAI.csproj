@@ -305,8 +305,9 @@
 	  </Reference>
 	  <Reference Include="Unity.TextMeshPro">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-	  </Reference>
-	  <Reference Include="UnityEngine">
+	  </Reference>  <Reference Include="UnityFileDialog">
+    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityFileDialog.dll</HintPath>
+  </Reference>	  <Reference Include="UnityEngine">
 	    <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.dll</HintPath>
 	  </Reference>
 	  <Reference Include="UnityEngine.AccessibilityModule">
