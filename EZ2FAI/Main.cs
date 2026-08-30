@@ -16,6 +16,11 @@ namespace EZ2FAI
         public static Harmony Harmony { get; private set; }
         public static Settings Settings { get; private set; }
         public static EZ2FAIPanel Panel { get; private set; }
+        // Runtime-created profile image assets (from LoadImage + Sprite.Create).
+        // Tracked so we can destroy the previous ones when the image changes,
+        // otherwise repeated changes leak native texture/sprite memory.
+        private static Sprite runtimeProfileSprite;
+        private static Texture2D runtimeProfileTexture;
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -40,6 +45,7 @@ namespace EZ2FAI
             {
                 UnityEngine.Object.Destroy(Panel.gameObject);
                 Panel = null;
+                DestroyRuntimeProfile();
                 Harmony.UnpatchAll(Harmony.Id);
                 Harmony = null;
             }
@@ -72,6 +78,19 @@ namespace EZ2FAI
                     SetProfileImage();
                 }
 
+                if (GUILayout.Button("Choose..."))
+                {
+                    string picked = UnityFileDialog.FileBrowser.PickFile(
+                        filterName: "Images (jpg/jpeg/png)",
+                        filterExtensions: new[] { "jpg", "jpeg", "png" },
+                        title: "Select Profile Image");
+                    if (!string.IsNullOrEmpty(picked))
+                    {
+                        Settings.ProfileImage = picked;
+                        SetProfileImage();
+                    }
+                }
+
                 GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();
@@ -82,6 +101,32 @@ namespace EZ2FAI
             changed |= DrawVector2(ref Settings.Scale);
             GUILayout.Label("<b>Pixel Per Unit</b>");
             changed |= DrawFloat("", ref Settings.pixelsPerUnitMultiplier, 1f, 4f);
+            GUILayout.Label("<b>Title Font Size</b>");
+            if (DrawFloat("", ref Settings.TitleFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
+            GUILayout.Label("<b>Value Font Size</b>");
+            if (DrawFloat("", ref Settings.ValueFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
+            GUILayout.Label("<b>Panel Opacity</b>");
+            if (DrawFloat("", ref Settings.PanelOpacity, 0.1f, 1f)) Panel.ApplyOpacity();
+
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Reset Position"))
+                {
+                    Settings.Position = new Vector2(0.16f, 0.1f);
+                    Settings.Scale = new Vector2(0.7f, 0.7f);
+                    Panel.Apply(Settings.Position, Settings.Scale);
+                }
+                if (GUILayout.Button("Reset Fonts / Opacity"))
+                {
+                    Settings.TitleFontSize = 1.5f;
+                    Settings.ValueFontSize = 1.5f;
+                    Settings.PanelOpacity = 1f;
+                    Panel.ApplyFontSize();
+                    Panel.ApplyOpacity();
+                }
+                GUILayout.FlexibleSpace();
+            }
+            GUILayout.EndHorizontal();
             if (changed) Panel.Apply(Settings.Position, Settings.Scale);
 
             GUILayout.BeginHorizontal();
@@ -114,14 +159,58 @@ namespace EZ2FAI
         }
         public static void SetProfileImage()
         {
-            if (string.IsNullOrEmpty(Settings.ProfileImage))
-                Panel.SetProfileImage(null);
-            else if (File.Exists(Settings.ProfileImage))
+            if (Panel == null) return;
+            if (string.IsNullOrEmpty(Settings.ProfileImage) || !File.Exists(Settings.ProfileImage))
             {
-                Texture2D texture = new Texture2D(1, 1);
-                texture.LoadImage(File.ReadAllBytes(Settings.ProfileImage));
+                Panel.SetProfileImage(null);
+                DestroyRuntimeProfile();
+                return;
+            }
+            Texture2D texture = new Texture2D(1, 1);
+            try
+            {
+                var method = typeof(ImageConversion).GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]), typeof(bool) });
+                if (method == null)
+                {
+                    UnityEngine.Object.Destroy(texture);
+                    Panel.SetProfileImage(null);
+                    DestroyRuntimeProfile();
+                    return;
+                }
+                var bytes = File.ReadAllBytes(Settings.ProfileImage);
+                bool ok = (bool)method.Invoke(null, new object[] { texture, bytes, false });
+                if (!ok || texture.width <= 1)
+                {
+                    UnityEngine.Object.Destroy(texture);
+                    Panel.SetProfileImage(null);
+                    DestroyRuntimeProfile();
+                    return;
+                }
                 var result = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
+                // Assign the new sprite first, then destroy the previous runtime assets.
                 Panel.SetProfileImage(result);
+                DestroyRuntimeProfile();
+                runtimeProfileSprite = result;
+                runtimeProfileTexture = texture;
+            }
+            catch
+            {
+                UnityEngine.Object.Destroy(texture);
+                Panel.SetProfileImage(null);
+                DestroyRuntimeProfile();
+            }
+        }
+        private static void DestroyRuntimeProfile()
+        {
+            if (runtimeProfileSprite != null)
+            {
+                UnityEngine.Object.Destroy(runtimeProfileSprite);
+                runtimeProfileSprite = null;
+            }
+            if (runtimeProfileTexture != null)
+            {
+                UnityEngine.Object.Destroy(runtimeProfileTexture);
+                runtimeProfileTexture = null;
             }
         }
         public static bool DrawVector2(ref Vector2 vec2)

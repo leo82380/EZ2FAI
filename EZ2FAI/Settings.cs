@@ -13,5 +13,8 @@ namespace EZ2FAI
         public bool SongProgress = false;
         //public bool IsCheckPoint = true;
         public float pixelsPerUnitMultiplier = 1f;
+        public float TitleFontSize = 1.5f;
+        public float ValueFontSize = 1.5f;
+        public float PanelOpacity = 1f;
     }
 }
