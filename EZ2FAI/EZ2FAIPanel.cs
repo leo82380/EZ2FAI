@@ -34,6 +34,10 @@ namespace EZ2FAI
         private readonly List<float> titleBaseSizes = new List<float>();
         private readonly List<TextMeshProUGUI> valueTexts = new List<TextMeshProUGUI>();
         private readonly List<float> valueBaseSizes = new List<float>();
+        private RectTransform mapNameMaskRT;
+        private RectTransform mapNameTextRT;
+        private Coroutine marqueeCoroutine;
+        private readonly List<TextMeshProUGUI> marqueeClones = new List<TextMeshProUGUI>();
         public void SetNickname(string nickName)
         {
             nickText.text = nickName;
@@ -59,20 +63,21 @@ namespace EZ2FAI
             string artist = RichTagBreaker.Replace(data.artist, string.Empty);
             string song = RichTagBreaker.Replace(data.song, string.Empty);
             authorText.text = string.IsNullOrEmpty(author) ? "" : "BY " + author;
+            // Full untruncated title: length varies wildly by script (CJK glyphs
+            // are much wider per-character than Latin ones), so instead of cutting
+            // by character count we render it in full and let the marquee (see
+            // MarqueeRoutine) scroll it within its clipped box when it overflows.
             string title;
             if (!string.IsNullOrEmpty(artist) && !string.IsNullOrEmpty(song))
-            {
-                string a = artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist;
-                string s = song.Length > 7 ? song.Substring(0, 7) + "..." : song;
-                title = a + " - " + s;
-            }
+                title = artist + " - " + song;
             else if (!string.IsNullOrEmpty(song))
-                title = song.Length > 7 ? song.Substring(0, 7) + "..." : song;
+                title = song;
             else if (!string.IsNullOrEmpty(artist))
-                title = artist.Length > 5 ? artist.Substring(0, 5) + "..." : artist;
+                title = artist;
             else
                 title = "";
             mapNameText.text = title;
+            RestartMarquee();
         }
         public void SetProfileImage(Sprite sprite)
         {
@@ -94,6 +99,14 @@ namespace EZ2FAI
         {
             mapNameText.text = "";
             authorText.text = "";
+            if (marqueeCoroutine != null)
+            {
+                StopCoroutine(marqueeCoroutine);
+                marqueeCoroutine = null;
+            }
+            ClearMarqueeClones();
+            if (mapNameTextRT != null)
+                mapNameTextRT.anchoredPosition = new Vector2(0f, mapNameTextRT.anchoredPosition.y);
         }
         public void Apply(Vector2 position, Vector2 scale)
         {
@@ -129,6 +142,11 @@ namespace EZ2FAI
             nickText = bg.Find("Nick").GetComponent<TextMeshProUGUI>();
             mapNameText = bg.Find("MapName").GetComponent<TextMeshProUGUI>();
             authorText = bg.Find("Author").GetComponent<TextMeshProUGUI>();
+            // Author line: truncate by actual rendered width (not a hardcoded char
+            // count) so a long author name in any script clips cleanly instead of
+            // spilling into neighbouring UI.
+            authorText.textWrappingMode = TextWrappingModes.NoWrap;
+            authorText.overflowMode = TextOverflowModes.Ellipsis;
             var judgeRateT = bg.Find("JudgeRate");
             judgeTitleText = judgeRateT.GetComponent<TextMeshProUGUI>();
             judgePercentText = judgeRateT.Find("Percent").GetComponent<TextMeshProUGUI>();
@@ -150,6 +168,7 @@ namespace EZ2FAI
             judgeTitleText.text = "Accuracy";
             FixJudgeLayout(bg);
             FixMapNamePosition(bg);
+            SetupMapNameMarquee(bg);
             RegisterTexts();
             FixFonts();
             ApplyFontSize();
@@ -227,6 +246,155 @@ namespace EZ2FAI
             catch { }
         }
 
+        // Wraps MapName in a clipped mask box the same size/position it already
+        // occupied, then reparents the text itself inside so it can be slid
+        // left/right without affecting anything else in the layout. Overflow
+        // mode is switched to render the full (untruncated) title; MarqueeRoutine
+        // scrolls it when it doesn't fit the box, matching how a ticker works.
+        private void SetupMapNameMarquee(Transform bg)
+        {
+            try
+            {
+                var mapRT = bg.Find("MapName") as RectTransform;
+                if (mapRT == null) return;
+                var maskGO = new GameObject("MapNameMask", typeof(RectTransform));
+                var maskRT = (RectTransform)maskGO.transform;
+                maskRT.SetParent(mapRT.parent, false);
+                maskRT.anchorMin = mapRT.anchorMin;
+                maskRT.anchorMax = mapRT.anchorMax;
+                maskRT.pivot = mapRT.pivot;
+                maskRT.anchoredPosition = mapRT.anchoredPosition;
+                maskRT.sizeDelta = mapRT.sizeDelta;
+                maskRT.SetSiblingIndex(mapRT.GetSiblingIndex());
+                maskGO.AddComponent<RectMask2D>();
+
+                mapRT.SetParent(maskRT, false);
+                mapRT.anchorMin = new Vector2(0f, 0.5f);
+                mapRT.anchorMax = new Vector2(0f, 0.5f);
+                mapRT.pivot = new Vector2(0f, 0.5f);
+                mapRT.anchoredPosition = Vector2.zero;
+
+                mapNameText.horizontalAlignment = HorizontalAlignmentOptions.Left;
+                mapNameText.textWrappingMode = TextWrappingModes.NoWrap;
+                mapNameText.overflowMode = TextOverflowModes.Overflow;
+
+                mapNameMaskRT = maskRT;
+                mapNameTextRT = mapRT;
+            }
+            catch (System.Exception e)
+            {
+                if (Main.Logger != null) Main.Logger.Log("SetupMapNameMarquee failed: " + e.Message);
+            }
+        }
+
+        private void RestartMarquee()
+        {
+            if (mapNameTextRT == null || mapNameMaskRT == null) return;
+            if (marqueeCoroutine != null) StopCoroutine(marqueeCoroutine);
+            marqueeCoroutine = StartCoroutine(MarqueeRoutine());
+        }
+
+        private void ClearMarqueeClones()
+        {
+            for (int i = 0; i < marqueeClones.Count; i++)
+                if (marqueeClones[i] != null) Destroy(marqueeClones[i].gameObject);
+            marqueeClones.Clear();
+        }
+
+        private static float MarqueeFadeWidth(float maskWidth) => Mathf.Min(40f, maskWidth * 0.25f);
+
+        // Fades a character's alpha to 0 near the mask's left/right edges by
+        // editing the TMP mesh's vertex colors directly — no shader or overlay
+        // image needed, so it dissolves into whatever's actually behind it
+        // (which varies per panel theme) instead of needing to color-match it.
+        private void ApplyEdgeFade(TextMeshProUGUI text, float offsetX, float maskWidth, float fadeWidth)
+        {
+            if (text == null) return;
+            var textInfo = text.textInfo;
+            if (textInfo == null) return;
+            for (int m = 0; m < textInfo.meshInfo.Length; m++)
+            {
+                var colors = textInfo.meshInfo[m].colors32;
+                if (colors == null) continue;
+                bool changed = false;
+                for (int i = 0; i < textInfo.characterCount; i++)
+                {
+                    var ch = textInfo.characterInfo[i];
+                    if (!ch.isVisible || ch.materialReferenceIndex != m) continue;
+                    float charX = offsetX + ch.origin;
+                    float alpha = Mathf.Min(
+                        Mathf.Clamp01(charX / fadeWidth),
+                        Mathf.Clamp01((maskWidth - charX) / fadeWidth));
+                    byte a = (byte)Mathf.RoundToInt(alpha * 255f);
+                    int vi = ch.vertexIndex;
+                    for (int k = 0; k < 4; k++)
+                    {
+                        var c = colors[vi + k];
+                        c.a = a;
+                        colors[vi + k] = c;
+                    }
+                    changed = true;
+                }
+                if (changed) text.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+            }
+        }
+
+        // Scrolls the title right-to-left inside its mask. Rather than waiting
+        // for the whole title to leave before jumping back to the right (which
+        // leaves the box empty for a stretch), it lays out as many copies of the
+        // text as needed, spaced (title width + gap) apart, so the next copy is
+        // always already entering from the right before the previous one fully
+        // exits on the left.
+        private IEnumerator MarqueeRoutine()
+        {
+            yield return null; // let TMP lay out the freshly-set text before measuring it
+            mapNameText.ForceMeshUpdate();
+            float textWidth = mapNameText.preferredWidth;
+            float maskWidth = mapNameMaskRT.rect.width;
+            float fadeWidth = MarqueeFadeWidth(maskWidth);
+            ClearMarqueeClones();
+            if (textWidth <= maskWidth)
+            {
+                mapNameTextRT.anchoredPosition = new Vector2(0f, mapNameTextRT.anchoredPosition.y);
+                yield break;
+            }
+
+            const float gap = 80f;
+            float cycle = textWidth + gap;
+            int copies = Mathf.Max(2, Mathf.CeilToInt(maskWidth / cycle) + 2);
+
+            var items = new List<RectTransform> { mapNameTextRT };
+            var texts = new List<TextMeshProUGUI> { mapNameText };
+            for (int i = 1; i < copies; i++)
+            {
+                var clone = Instantiate(mapNameText, mapNameTextRT.parent);
+                clone.rectTransform.anchorMin = mapNameTextRT.anchorMin;
+                clone.rectTransform.anchorMax = mapNameTextRT.anchorMax;
+                clone.rectTransform.pivot = mapNameTextRT.pivot;
+                clone.rectTransform.sizeDelta = mapNameTextRT.sizeDelta;
+                clone.ForceMeshUpdate();
+                marqueeClones.Add(clone);
+                items.Add(clone.rectTransform);
+                texts.Add(clone);
+            }
+            for (int i = 0; i < items.Count; i++)
+                items[i].anchoredPosition = new Vector2(maskWidth + i * cycle, items[i].anchoredPosition.y);
+
+            float wrapDistance = cycle * items.Count;
+            while (true)
+            {
+                float speed = Main.Settings != null ? Main.Settings.MarqueeSpeed : 60f;
+                for (int i = 0; i < items.Count; i++)
+                {
+                    float x = items[i].anchoredPosition.x - speed * Time.deltaTime;
+                    if (x <= -textWidth) x += wrapDistance;
+                    items[i].anchoredPosition = new Vector2(x, items[i].anchoredPosition.y);
+                    ApplyEdgeFade(texts[i], x, maskWidth, fadeWidth);
+                }
+                yield return null;
+            }
+        }
+
         // ADOFAI v3 / Unity 6 fix:
         // EZ2FAI.assets was built with Unity 2022.3, and its bundled TMP font
         // ("SB agr M SDF" TMP_FontAsset) fails to deserialize on the Unity 6
@@ -253,12 +421,20 @@ namespace EZ2FAI
                     font = RDConstants.data.latinFontTMPro;
                 if (font == null)
                     return;
+                // Swapping fonts also swaps line-height/ascender-descender metrics.
+                // The bundled font this panel was designed for is Latin-sized;
+                // localized fonts (e.g. Japanese) report much taller font-metadata
+                // metrics, so Middle (which centers using the font's declared
+                // ascender/descender) still sits low. Geometry centers on the
+                // actual rendered glyph ink instead, which is font-metric
+                // independent and is the mode TMP recommends for mixed/substituted
+                // fonts like this.
                 foreach (var t in new TextMeshProUGUI[] { nameText, nickText, mapNameText, authorText, judgeTitleText, judgePercentText, curBPMTitleText, curBPMText, realBPMTitleText, realBPMText })
-                    if (t != null) t.font = font;
+                    if (t != null) { t.font = font; t.verticalAlignment = VerticalAlignmentOptions.Geometry; }
                 for (int i = 0; i < 7; i++)
                 {
-                    if (judgeTitleTexts != null && judgeTitleTexts[i] != null) judgeTitleTexts[i].font = font;
-                    if (judgeCountTexts != null && judgeCountTexts[i] != null) judgeCountTexts[i].font = font;
+                    if (judgeTitleTexts != null && judgeTitleTexts[i] != null) { judgeTitleTexts[i].font = font; judgeTitleTexts[i].verticalAlignment = VerticalAlignmentOptions.Geometry; }
+                    if (judgeCountTexts != null && judgeCountTexts[i] != null) { judgeCountTexts[i].font = font; judgeCountTexts[i].verticalAlignment = VerticalAlignmentOptions.Geometry; }
                 }
             }
             catch (System.Exception e)

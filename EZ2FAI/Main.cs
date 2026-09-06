@@ -107,6 +107,8 @@ namespace EZ2FAI
             if (DrawFloat("", ref Settings.ValueFontSize, 0.5f, 3f)) Panel.ApplyFontSize();
             GUILayout.Label("<b>Panel Opacity</b>");
             if (DrawFloat("", ref Settings.PanelOpacity, 0.1f, 1f)) Panel.ApplyOpacity();
+            GUILayout.Label("<b>Title Marquee Speed</b>");
+            DrawFloat("", ref Settings.MarqueeSpeed, 10f, 300f);
 
             GUILayout.BeginHorizontal();
             {
@@ -258,7 +260,15 @@ namespace EZ2FAI
             GUILayout.Space(8f);
             if (valueFormat != "{0}")
                 GUILayout.Label(string.Format(valueFormat, newValue));
-            else float.TryParse(GUILayout.TextField(newValue.ToString("F4")), out newValue);
+            else
+            {
+                // TryParse writes 0 into its out param on failure, so parse into a
+                // temp and only commit on success — otherwise clearing/mid-editing
+                // the field would snap the slider to 0.
+                string text = GUILayout.TextField(newValue.ToString("F4"));
+                if (float.TryParse(text, out float parsed))
+                    newValue = parsed;
+            }
             GUILayout.FlexibleSpace();
             return newValue;
         }

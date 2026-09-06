@@ -16,5 +16,6 @@ namespace EZ2FAI
         public float TitleFontSize = 1.5f;
         public float ValueFontSize = 1.5f;
         public float PanelOpacity = 1f;
+        public float MarqueeSpeed = 60f;
     }
 }
